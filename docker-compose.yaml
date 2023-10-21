@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  web:
+    image: portfolio
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/app
+      - portfolio_node_modules:/app/node_modules
+      - portfolio_next:/app/.next
+    restart: always
+    container_name: portfolio-container
+volumes:
+  portfolio_node_modules:
+  portfolio_next:
