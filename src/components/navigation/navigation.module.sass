@@ -1,0 +1,17 @@
+.underline
+  position: relative
+  
+  &::after
+    content: ''
+    position: absolute
+    left: 0
+    bottom: -2px
+    width: 100%
+    height: 2px
+    background-color: #FFF
+    opacity: 0
+    transition: opacity 200ms ease-in-out
+
+  &:hover
+    &::after
+      opacity: 1
