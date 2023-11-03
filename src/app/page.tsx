@@ -1,6 +1,20 @@
 "use client";
+
 import { motion } from "framer-motion";
 import Chevron from "@/icons/chevron";
+import Tilt from "react-parallax-tilt";
+import ReactIcon from "@/icons/skills/react";
+import ExpressIcon from "@/icons/skills/express";
+import DjangoIcon from "@/icons/skills/django";
+import NextIcon from "@/icons/skills/nextjs";
+import TypescriptIcon from "@/icons/skills/typescript";
+import JavaScriptIcon from "@/icons/skills/javascript";
+import PythonIcon from "@/icons/skills/python";
+import HTML5Icon from "@/icons/skills/html";
+import CSS3Icon from "@/icons/skills/css";
+import NodeIcon from "@/icons/skills/nodejs";
+import DockerIcon from "@/icons/skills/docker";
+import GitIcon from "@/icons/skills/git";
 
 const name = "Sean Stocker";
 const title = "Full Stack Web Developer";
@@ -39,6 +53,63 @@ const characterAnimation = {
     y: 0,
   },
 };
+
+const languageIcons = [
+  {
+    name: "TypeScript",
+    Icon: TypescriptIcon,
+  },
+  {
+    name: "JavaScript",
+    Icon: JavaScriptIcon,
+  },
+  {
+    name: "Python",
+    Icon: PythonIcon,
+  },
+  {
+    name: "HTML5",
+    Icon: HTML5Icon,
+  },
+  {
+    name: "CSS3",
+    Icon: CSS3Icon,
+  },
+];
+
+const frameworkIcons = [
+  {
+    name: "Next.js",
+    Icon: NextIcon,
+  },
+  {
+    name: "React.js",
+    Icon: ReactIcon,
+  },
+  {
+    name: "Express.js",
+    Icon: ExpressIcon,
+  },
+  {
+    name: "Django",
+    Icon: DjangoIcon,
+  },
+];
+
+const otherIcons = [
+  {
+    name: "Node.js",
+    Icon: NodeIcon,
+  },
+  {
+    name: "Docker",
+    Icon: DockerIcon,
+  },
+  {
+    name: "Git",
+    Icon: GitIcon,
+  },
+];
 
 export default function Home() {
   return (
@@ -122,7 +193,31 @@ export default function Home() {
         id="about"
         className="min-h-screen min-w-full flex items-center justify-center border-b"
       >
-        About
+        <div className="w-full flex gap-10 flex-wrap justify-center">
+          {[
+            { title: "Languages", icons: languageIcons },
+            { title: "Frameworks", icons: frameworkIcons },
+            { title: "Other", icons: otherIcons },
+          ].map(({ title, icons }, index) => (
+            <Tilt key={index}>
+              <div className="w-64 h-[420px] rounded-lg border-2 p-4 px-6 flex flex-col gap-7 text-lg">
+                <div>
+                  <h3 className="text-xl font-semibold text-center">{title}</h3>
+                  <hr className="mt-2" />
+                </div>
+                {icons.map(({ name, Icon }, index) => (
+                  <div
+                    key={`${name}-${index}`}
+                    className="flex items-center gap-6"
+                  >
+                    <Icon className="w-10 fill-white" />
+                    <span>{name}</span>
+                  </div>
+                ))}
+              </div>
+            </Tilt>
+          ))}
+        </div>
       </section>
 
       {/* Projects */}
