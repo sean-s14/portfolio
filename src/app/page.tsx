@@ -12,9 +12,10 @@ import JavaScriptIcon from "@/icons/skills/javascript";
 import PythonIcon from "@/icons/skills/python";
 import HTML5Icon from "@/icons/skills/html";
 import CSS3Icon from "@/icons/skills/css";
+import GitIcon from "@/icons/skills/git";
 import NodeIcon from "@/icons/skills/nodejs";
 import DockerIcon from "@/icons/skills/docker";
-import GitIcon from "@/icons/skills/git";
+import KubernetesIcon from "@/icons/skills/kubernetes";
 
 const name = "Sean Stocker";
 const title = "Full Stack Web Developer";
@@ -98,6 +99,10 @@ const frameworkIcons = [
 
 const otherIcons = [
   {
+    name: "Git",
+    Icon: GitIcon,
+  },
+  {
     name: "Node.js",
     Icon: NodeIcon,
   },
@@ -106,8 +111,8 @@ const otherIcons = [
     Icon: DockerIcon,
   },
   {
-    name: "Git",
-    Icon: GitIcon,
+    name: "Kubernetes",
+    Icon: KubernetesIcon,
   },
 ];
 
@@ -118,7 +123,7 @@ export default function Home() {
       <h2 className="hidden">Intro</h2>
       <section
         id="home"
-        className="min-h-screen min-w-full flex flex-col items-start justify-center border-b px-8 xs:px-16 sm:px-40"
+        className="min-h-screen min-w-full flex flex-col items-start justify-center px-8 xs:px-16 sm:px-40"
       >
         <motion.div
           variants={wordAnimation}
@@ -191,16 +196,16 @@ export default function Home() {
       <h2 className="hidden">About</h2>
       <section
         id="about"
-        className="min-h-screen min-w-full flex items-center justify-center border-b"
+        className="min-h-screen min-w-full flex items-center justify-center border-b py-10 sm:py-10 px-4 sm:px-10"
       >
-        <div className="w-full flex gap-10 flex-wrap justify-center">
+        <div className="w-full flex gap-4 sm:gap-10 lg:gap-20 flex-wrap justify-center">
           {[
             { title: "Languages", icons: languageIcons },
             { title: "Frameworks", icons: frameworkIcons },
             { title: "Other", icons: otherIcons },
           ].map(({ title, icons }, index) => (
             <Tilt key={index}>
-              <div className="w-64 h-[420px] rounded-lg border-2 p-4 px-6 flex flex-col gap-7 text-lg">
+              <div className="w-72 h-[420px] rounded-lg border-2 p-4 px-6 flex flex-col gap-7 text-lg">
                 <div>
                   <h3 className="text-xl font-semibold text-center">{title}</h3>
                   <hr className="mt-2" />
