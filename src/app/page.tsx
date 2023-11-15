@@ -3,6 +3,9 @@
 import { motion } from "framer-motion";
 import Chevron from "@/icons/chevron";
 import Tilt from "react-parallax-tilt";
+import Link from "next/link";
+
+// Icons for skills
 import ReactIcon from "@/icons/skills/react";
 import ExpressIcon from "@/icons/skills/express";
 import DjangoIcon from "@/icons/skills/django";
@@ -16,6 +19,12 @@ import GitIcon from "@/icons/skills/git";
 import NodeIcon from "@/icons/skills/nodejs";
 import DockerIcon from "@/icons/skills/docker";
 import KubernetesIcon from "@/icons/skills/kubernetes";
+
+// Social Media Icons
+import GmailIcon from "@/icons/social/gmail";
+import TelegramIcon from "@/icons/social/telegram";
+import LinkedInIcon from "@/icons/social/linkedin";
+import GitHubIcon from "@/icons/social/github";
 
 const name = "Sean Stocker";
 const title = "Full Stack Web Developer";
@@ -116,6 +125,29 @@ const otherIcons = [
   },
 ];
 
+const socialIcons = [
+  {
+    name: "Gmail",
+    Icon: GmailIcon,
+    link: `mailto:${process.env.NEXT_PUBLIC_GMAIL}`,
+  },
+  {
+    name: "LinkedIn",
+    Icon: LinkedInIcon,
+    link: `https://www.linkedin.com/in/${process.env.NEXT_PUBLIC_LINKEDIN}`,
+  },
+  {
+    name: "Telegram",
+    Icon: TelegramIcon,
+    link: `https://t.me/${process.env.NEXT_PUBLIC_TELEGRAM}`,
+  },
+  {
+    name: "GitHub",
+    Icon: GitHubIcon,
+    link: `https://github.com/${process.env.NEXT_PUBLIC_GITHUB}`,
+  },
+];
+
 export default function Home() {
   return (
     <div className="min-h-full min-w-full flex flex-col items-center justify-center">
@@ -196,7 +228,7 @@ export default function Home() {
       <h2 className="hidden">About</h2>
       <section
         id="about"
-        className="min-h-screen min-w-full flex items-center justify-center border-b py-10 sm:py-10 px-4 sm:px-10"
+        className="min-h-screen min-w-full flex items-center justify-center border-b pt-20 sm:pt-10 px-4 sm:px-10"
       >
         <div className="w-full flex gap-4 sm:gap-10 lg:gap-20 flex-wrap justify-center">
           {[
@@ -204,10 +236,13 @@ export default function Home() {
             { title: "Frameworks", icons: frameworkIcons },
             { title: "Other", icons: otherIcons },
           ].map(({ title, icons }, index) => (
+            // TODO: Add fade-in animation
             <Tilt key={index}>
               <div className="w-72 h-[420px] rounded-lg border-2 p-4 px-6 flex flex-col gap-7 text-lg">
                 <div>
-                  <h3 className="text-xl font-semibold text-center">{title}</h3>
+                  <h3 className="text-xl font-semibold text-center tracking-widest">
+                    {title.toUpperCase()}
+                  </h3>
                   <hr className="mt-2" />
                 </div>
                 {icons.map(({ name, Icon }, index) => (
@@ -238,9 +273,26 @@ export default function Home() {
       <h2 className="hidden">Contact</h2>
       <section
         id="contact"
-        className="min-h-screen min-w-full flex items-center justify-center border-b"
+        className="min-h-screen min-w-full flex flex-col items-center justify-center"
       >
-        Contact
+        {/* TODO: Add fade-in transition */}
+        <div className="grid grid-cols-2 gap-10">
+          {socialIcons.map(({ name, Icon, link }, index) => (
+            <Link
+              key={`${name}-${index}`}
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-4 sm:p-5 rounded-full cursor-pointer"
+              style={{
+                boxShadow:
+                  "0 20px 30px rgba(0, 0, 0, 0.2), inset -8px 15px 30px 5px rgba(255, 255, 255, 0.6)",
+              }}
+            >
+              <Icon className="w-14 sm:w-20" />
+            </Link>
+          ))}
+        </div>
       </section>
     </div>
   );
