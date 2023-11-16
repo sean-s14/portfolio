@@ -1,6 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
+import { motion, useInView, useAnimation } from "framer-motion";
 import Chevron from "@/icons/chevron";
 import Tilt from "react-parallax-tilt";
 import Link from "next/link";
@@ -148,152 +149,203 @@ const socialIcons = [
   },
 ];
 
+// TODO: Add backgrounds to each section
+
 export default function Home() {
   return (
     <div className="min-h-full min-w-full flex flex-col items-center justify-center">
       {/* Home (Intro) */}
       <h2 className="hidden">Intro</h2>
-      <section
-        id="home"
-        className="min-h-screen min-w-full flex flex-col items-start justify-center px-8 xs:px-16 sm:px-40"
-      >
-        <motion.div
-          variants={wordAnimation}
-          initial="hidden"
-          animate="visible"
-          className="w-full flex flex-col gap-1 xs:gap-2 sm:gap-3"
-        >
-          {/* Name */}
-          <h3>
-            {name.split("").map((letter, index) => (
-              <motion.span
-                key={index}
-                className="text-3xl xs:text-4xl sm:text-5xl"
-                variants={characterAnimation}
-              >
-                {letter}
-              </motion.span>
-            ))}
-          </h3>
-
-          {/* Title */}
-          <h4>
-            {title.split("").map((letter, index) => (
-              <motion.span
-                key={index}
-                className="text-lg xs:text-xl sm:text-2xl text-gray-400"
-                variants={characterAnimation}
-              >
-                {letter}
-              </motion.span>
-            ))}
-          </h4>
-
-          {/* Description */}
-          <motion.div variants={wordAnimation2} className="max-w-3xl">
-            {description.split("").map((letter, index) => (
-              <motion.span
-                key={index}
-                className="text-sm xs:text-base sm:text-lg text-gray-300"
-                variants={characterAnimation}
-              >
-                {letter}
-              </motion.span>
-            ))}
-          </motion.div>
-
-          {/* Down Arrow */}
-          <motion.div
-            variants={{
-              hidden: { opacity: 0, y: 50 },
-              visible: {
-                opacity: 1,
-                y: 0,
-                transition: { duration: 0.8, delay: 3 },
-              },
-            }}
-            className="self-center mt-10 xs:mt-32"
-          >
-            <a
-              href="#about"
-              className="border border-gray-100 rounded-full h-12 w-12 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-gray-100/30 transition-colors"
-            >
-              <Chevron className="fill-gray-100 w-1/2 mt-1" />
-            </a>
-          </motion.div>
-        </motion.div>
-      </section>
+      <Intro />
 
       {/* About */}
       <h2 className="hidden">About</h2>
-      <section
-        id="about"
-        className="min-h-screen min-w-full flex items-center justify-center border-b pt-20 sm:pt-10 px-4 sm:px-10"
-      >
-        <div className="w-full flex gap-4 sm:gap-10 lg:gap-20 flex-wrap justify-center">
-          {[
-            { title: "Languages", icons: languageIcons },
-            { title: "Frameworks", icons: frameworkIcons },
-            { title: "Other", icons: otherIcons },
-          ].map(({ title, icons }, index) => (
-            // TODO: Add fade-in animation
-            <Tilt key={index}>
-              <div className="w-72 h-[420px] rounded-lg border-2 p-4 px-6 flex flex-col gap-7 text-lg">
-                <div>
-                  <h3 className="text-xl font-semibold text-center tracking-widest">
-                    {title.toUpperCase()}
-                  </h3>
-                  <hr className="mt-2" />
-                </div>
-                {icons.map(({ name, Icon }, index) => (
-                  <div
-                    key={`${name}-${index}`}
-                    className="flex items-center gap-6"
-                  >
-                    <Icon className="w-10 fill-white" />
-                    <span>{name}</span>
-                  </div>
-                ))}
-              </div>
-            </Tilt>
-          ))}
-        </div>
-      </section>
+      <About />
 
       {/* Projects */}
       <h2 className="hidden">Projects</h2>
-      <section
-        id="projects"
-        className="min-h-screen min-w-full flex items-center justify-center border-b"
-      >
-        Projects
-      </section>
+      <Projects />
 
       {/* Contact */}
       <h2 className="hidden">Contact</h2>
-      <section
-        id="contact"
-        className="min-h-screen min-w-full flex flex-col items-center justify-center"
-      >
-        {/* TODO: Add fade-in transition */}
-        <div className="grid grid-cols-2 gap-10">
-          {socialIcons.map(({ name, Icon, link }, index) => (
-            <Link
-              key={`${name}-${index}`}
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-4 sm:p-5 rounded-full cursor-pointer"
-              style={{
-                boxShadow:
-                  "0 20px 30px rgba(0, 0, 0, 0.2), inset -8px 15px 30px 5px rgba(255, 255, 255, 0.6)",
-              }}
-            >
-              <Icon className="w-14 sm:w-20" />
-            </Link>
-          ))}
-        </div>
-      </section>
+      <Contact />
     </div>
+  );
+}
+
+function Intro() {
+  return (
+    <section
+      id="home"
+      className="min-h-screen min-w-full flex flex-col items-start justify-center px-8 xs:px-16 sm:px-40"
+    >
+      <motion.div
+        variants={wordAnimation}
+        initial="hidden"
+        animate="visible"
+        className="w-full flex flex-col gap-1 xs:gap-2 sm:gap-3"
+      >
+        {/* Name */}
+        <h3>
+          {name.split("").map((letter, index) => (
+            <motion.span
+              key={index}
+              className="text-3xl xs:text-4xl sm:text-5xl"
+              variants={characterAnimation}
+            >
+              {letter}
+            </motion.span>
+          ))}
+        </h3>
+
+        {/* Title */}
+        <h4>
+          {title.split("").map((letter, index) => (
+            <motion.span
+              key={index}
+              className="text-lg xs:text-xl sm:text-2xl text-gray-400"
+              variants={characterAnimation}
+            >
+              {letter}
+            </motion.span>
+          ))}
+        </h4>
+
+        {/* Description */}
+        <motion.div variants={wordAnimation2} className="max-w-3xl">
+          {description.split("").map((letter, index) => (
+            <motion.span
+              key={index}
+              className="text-sm xs:text-base sm:text-lg text-gray-300"
+              variants={characterAnimation}
+            >
+              {letter}
+            </motion.span>
+          ))}
+        </motion.div>
+
+        {/* Down Arrow */}
+        <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 50 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: 0.8, delay: 3 },
+            },
+          }}
+          className="self-center mt-10 xs:mt-32"
+        >
+          <a
+            href="#about"
+            className="border border-gray-100 rounded-full h-12 w-12 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-gray-100/30 transition-colors"
+          >
+            <Chevron className="fill-gray-100 w-1/2 mt-1" />
+          </a>
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
+
+function About() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  const mainControls = useAnimation();
+
+  useEffect(() => {
+    if (isInView) {
+      mainControls.start("visible");
+    }
+  }, [isInView, mainControls]);
+
+  const classNames = ["lg:mt-0", "lg:mt-24", "lg:mt-48"];
+
+  return (
+    <section
+      ref={ref}
+      id="about"
+      className="min-h-screen min-w-full flex items-center justify-center border-b px-4 sm:px-10"
+    >
+      <div className="w-full flex gap-4 xs:gap-8 flex-wrap justify-center">
+        {[
+          { title: "Languages", icons: languageIcons },
+          { title: "Frameworks", icons: frameworkIcons },
+          { title: "Other", icons: otherIcons },
+        ].map(({ title, icons }, index) => (
+          <Tilt key={index}>
+            <motion.div
+              variants={{
+                hidden: { opacity: 0, y: 100 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: { duration: 1, delay: 0.4 + index * 0.4 },
+                },
+              }}
+              initial="hidden"
+              animate={mainControls}
+              className={`mt-0 ${classNames[index]} w-72 h-[420px] rounded-lg border-2 p-4 px-6 flex flex-col gap-7 text-lg`}
+            >
+              <div>
+                <h3 className="text-xl font-semibold text-center tracking-widest">
+                  {title.toUpperCase()}
+                </h3>
+                <hr className="mt-2" />
+              </div>
+              {icons.map(({ name, Icon }, index) => (
+                <div
+                  key={`${name}-${index}`}
+                  className="flex items-center gap-6"
+                >
+                  <Icon className="w-10 fill-white" />
+                  <span>{name}</span>
+                </div>
+              ))}
+            </motion.div>
+          </Tilt>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Projects() {
+  return (
+    <section
+      id="projects"
+      className="min-h-screen min-w-full flex items-center justify-center border-b"
+    >
+      Projects
+    </section>
+  );
+}
+
+function Contact() {
+  return (
+    <section
+      id="contact"
+      className="min-h-screen min-w-full flex flex-col items-center justify-center"
+    >
+      {/* TODO: Add fade-in transition */}
+      <div className="grid grid-cols-2 gap-10">
+        {socialIcons.map(({ name, Icon, link }, index) => (
+          <Link
+            key={`${name}-${index}`}
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-4 sm:p-5 hover:scale-125 rounded-full cursor-pointer flex justify-center items-center transition-all"
+            style={{
+              boxShadow:
+                "0 20px 30px rgba(0, 0, 0, 0.2), inset -8px 15px 30px 5px rgba(255, 255, 255, 0.6)",
+            }}
+          >
+            <Icon className="w-14 sm:w-20" />
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }
