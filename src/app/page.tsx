@@ -274,20 +274,21 @@ function About() {
           { title: "Frameworks", icons: frameworkIcons },
           { title: "Other", icons: otherIcons },
         ].map(({ title, icons }, index) => (
-          <Tilt key={index}>
-            <motion.div
-              variants={{
-                hidden: { opacity: 0, y: 100 },
-                visible: {
-                  opacity: 1,
-                  y: 0,
-                  transition: { duration: 1, delay: 0.4 + index * 0.4 },
-                },
-              }}
-              initial="hidden"
-              animate={mainControls}
-              className={`mt-0 ${classNames[index]} w-72 h-[420px] rounded-lg border-2 p-4 px-6 flex flex-col gap-7 text-lg`}
-            >
+          <motion.div
+            key={index}
+            variants={{
+              hidden: { opacity: 0, y: 100 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 1, delay: 0.4 + index * 0.4 },
+              },
+            }}
+            initial="hidden"
+            animate={mainControls}
+            className={`mt-0 ${classNames[index]} `}
+          >
+            <Tilt className="w-72 h-[420px] rounded-lg border-2 p-4 px-6 flex flex-col gap-7 text-lg">
               <div>
                 <h3 className="text-xl font-semibold text-center tracking-widest">
                   {title.toUpperCase()}
@@ -303,8 +304,8 @@ function About() {
                   <span>{name}</span>
                 </div>
               ))}
-            </motion.div>
-          </Tilt>
+            </Tilt>
+          </motion.div>
         ))}
       </div>
     </section>
@@ -323,27 +324,55 @@ function Projects() {
 }
 
 function Contact() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  const mainControls = useAnimation();
+
+  useEffect(() => {
+    if (isInView) {
+      mainControls.start("visible");
+    }
+  }, [isInView, mainControls]);
+
   return (
     <section
+      ref={ref}
       id="contact"
       className="min-h-screen min-w-full flex flex-col items-center justify-center"
     >
-      {/* TODO: Add fade-in transition */}
       <div className="grid grid-cols-2 gap-10">
         {socialIcons.map(({ name, Icon, link }, index) => (
-          <Link
+          <motion.div
             key={`${name}-${index}`}
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-4 sm:p-5 hover:scale-125 rounded-full cursor-pointer flex justify-center items-center transition-all"
-            style={{
-              boxShadow:
-                "0 20px 30px rgba(0, 0, 0, 0.2), inset -8px 15px 30px 5px rgba(255, 255, 255, 0.6)",
+            variants={{
+              hidden: { scale: 0 },
+              visible: {
+                scale: 1,
+                transition: {
+                  duration: 0.8,
+                  delay: 0.4 + index * 0.4,
+                  type: "spring",
+                  ease: "easeOut",
+                },
+              },
             }}
+            initial="hidden"
+            animate={mainControls}
           >
-            <Icon className="w-14 sm:w-20" />
-          </Link>
+            <Link
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-4 sm:p-5 hover:scale-125 rounded-full cursor-pointer flex justify-center items-center transition-all"
+              style={{
+                boxShadow:
+                  "0 20px 30px rgba(0, 0, 0, 0.2), inset -8px 15px 30px 5px rgba(255, 255, 255, 0.6)",
+              }}
+            >
+              <Icon className="w-14 sm:w-20" />
+            </Link>
+          </motion.div>
         ))}
       </div>
     </section>
