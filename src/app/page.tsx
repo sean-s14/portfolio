@@ -339,7 +339,7 @@ function Contact() {
     <section
       ref={ref}
       id="contact"
-      className="min-h-screen min-w-full flex flex-col items-center justify-center"
+      className="min-h-screen min-w-full flex flex-col items-center justify-start pt-64"
     >
       <div className="grid grid-cols-2 gap-10">
         {socialIcons.map(({ name, Icon, link }, index) => (
@@ -351,7 +351,7 @@ function Contact() {
                 scale: 1,
                 transition: {
                   duration: 0.8,
-                  delay: 0.4 + index * 0.4,
+                  delay: 0.8 + index * 0.4,
                   type: "spring",
                   ease: "easeOut",
                 },

@@ -1,0 +1,9 @@
+- Update README
+- Implement prisma databse
+- Create the following pages:
+  - Project Create
+  - Project Edit
+  - Project View
+  - Project List
+- Ensure only admin can login
+- Ensure only admin can modify data in database
