@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Exo_2 } from "next/font/google";
+import { motion, useAnimation } from "framer-motion";
 import styles from "./navigation.module.sass";
 import MenuIcon from "@/icons/menu";
 import CloseMenuIcon from "@/icons/close-menu";
@@ -16,9 +17,17 @@ const links = [
   { id: 4, href: "#contact", label: "Contact" },
 ];
 
-// TODO: Remove redundancies
 export default function Navigation() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const mainControls = useAnimation();
+
+  useEffect(() => {
+    if (menuOpen) {
+      mainControls.start("visible");
+    } else {
+      mainControls.set("hidden");
+    }
+  }, [menuOpen, mainControls]);
 
   function toggleMenu() {
     setMenuOpen(!menuOpen);
@@ -62,16 +71,31 @@ export default function Navigation() {
           </button>
         </div>
         <ul className="flex flex-col gap-10">
-          {/* TODO: Animate links */}
-          {links.map((link) => (
+          {links.map((link, index) => (
             <li key={link.id}>
-              <a
-                href={link.href}
-                className={"text-4xl w-full"}
-                onClick={toggleMenu}
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, x: 50 },
+                  visible: {
+                    opacity: 1,
+                    x: 0,
+                    transition: {
+                      duration: 0.5,
+                      delay: 0.25 + index * 0.25,
+                    },
+                  },
+                }}
+                initial="hidden"
+                animate={mainControls}
               >
-                {link.label.toUpperCase()}
-              </a>
+                <a
+                  href={link.href}
+                  className={"text-4xl w-full"}
+                  onClick={toggleMenu}
+                >
+                  {link.label.toUpperCase()}
+                </a>
+              </motion.div>
             </li>
           ))}
         </ul>
