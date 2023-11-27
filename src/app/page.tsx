@@ -318,7 +318,9 @@ function Projects() {
       id="projects"
       className="min-h-screen min-w-full flex items-center justify-center border-b"
     >
-      Projects
+      <Link href="/projects" className="hover:text-blue-200">
+        View all projects
+      </Link>
     </section>
   );
 }
