@@ -20,13 +20,17 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className + " overflow-x-hidden"}>
         {/* Navigation */}
-        <Navigation />
+        <div className="h-12">
+          <Navigation />
+        </div>
 
         {/* Content */}
-        <main>{children}</main>
+        <main style={{ minHeight: "calc(100vh - 96px)" }}>{children}</main>
 
         {/* Footer */}
-        <Footer />
+        <div className="h-12">
+          <Footer />
+        </div>
       </body>
     </html>
   );
