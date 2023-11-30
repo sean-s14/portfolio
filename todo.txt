@@ -1,7 +1,4 @@
 - Update README
-- Create the following pages:
-  - Project Edit
-  - Project View
 - Ensure only admin can login
 - Ensure only admin can modify data in database
 - NextAuth does not see session after redirecting

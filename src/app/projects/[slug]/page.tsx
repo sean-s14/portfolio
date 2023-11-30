@@ -1,9 +1,11 @@
 import Chevron from "@/icons/chevron";
 import Link from "next/link";
+import { auth } from "@/auth";
 
 async function getProject(slug: string) {
   const res = await fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + `/projects/api/${slug}`
+    process.env.NEXT_PUBLIC_BASE_URL + `/projects/api/${slug}`,
+    { next: { revalidate: 3600 } }
   );
   if (!res.ok) throw new Error("Failed to fetch project");
   const project = await res.json();
@@ -12,6 +14,7 @@ async function getProject(slug: string) {
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const project = await getProject(params.slug);
+  const session = await auth();
 
   return (
     <div className="p-4 pt-10 flex flex-col items-center">
@@ -22,7 +25,17 @@ export default async function Page({ params }: { params: { slug: string } }) {
         <Chevron className="w-3 rotate-90" />
         <span>All Projects</span>
       </Link>
-      <div className="w-4/5 max-w-full">
+      <div className="w-4/5 max-w-full relative">
+        {/* Edit Button */}
+        {session?.user?.email && (
+          <Link
+            href={`/projects/edit/${params.slug}`}
+            className="absolute right-0 top-0 bg-blue-400 rounded py-1 px-2"
+          >
+            Edit
+          </Link>
+        )}
+
         {/* Title */}
         <h1 className="text-3xl font-semibold">{project.title}</h1>
 
