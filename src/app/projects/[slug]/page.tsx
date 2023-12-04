@@ -1,8 +1,18 @@
 import Chevron from "@/icons/chevron";
 import Link from "next/link";
 import { auth } from "@/auth";
+import ImageSlider from "@/components/imageSlider/imageSlider";
 
-async function getProject(slug: string) {
+type Project = {
+  title: string;
+  description: string;
+  tags: string[];
+  imageLinks: string[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+async function getProject(slug: string): Promise<Project> {
   const res = await fetch(
     process.env.NEXT_PUBLIC_BASE_URL + `/projects/api/${slug}`,
     { next: { revalidate: 3600 } }
@@ -44,7 +54,8 @@ export default async function Page({ params }: { params: { slug: string } }) {
           {new Date(project.createdAt).toDateString()}
         </div>
 
-        {/* TODO: Images */}
+        {/* Images */}
+        <ImageSlider imageLinks={project.imageLinks} />
 
         {/* Description */}
         <p className="text-lg mt-10">{project.description}</p>

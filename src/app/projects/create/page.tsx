@@ -122,8 +122,6 @@ export default function Page() {
           <ImageSlider
             imageLinks={imageLinks.split(" ").filter((link) => link !== "")}
             handleDelete={handleDeleteImage}
-            width={420}
-            height={280}
           />
         )}
 

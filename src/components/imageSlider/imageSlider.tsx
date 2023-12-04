@@ -12,7 +12,7 @@ export default function ImageSlider({
   imageLinks,
   handleDelete,
   width = 900,
-  height = 600,
+  height,
 }: {
   imageLinks: string[];
   handleDelete?: (imageLink: string) => void;
@@ -41,13 +41,26 @@ export default function ImageSlider({
     });
   }
 
+  const autoHeight = (width / 3) * 2;
+
+  const sizes: { [key: string]: string } = {
+    xs: "xs:w-[300px] xs:h-[200px] xs:min-h-[200px]",
+    sm: "sm:w-[420px] sm:h-[280px] sm:min-h-[280px]",
+    md: "md:w-[540px] md:h-[360px] md:min-h-[360px]",
+    lg: "lg:w-[660px] lg:h-[440px] lg:min-h-[440px]",
+    xl: "xl:w-[780px] xl:h-[520px] xl:min-h-[520px]",
+    "2xl": "2xl:w-[900px] 2xl:h-[600px] 2xl:min-h-[600px]",
+  };
+
+  // combine all sizes into one string
+  let completeSizeString = "w-[240px] h-[160px] min-h-[160px] ";
+  for (const key in sizes) {
+    completeSizeString += `${sizes[key]} `;
+  }
+
   return (
     <div
-      className="relative flex flex-col items-center overflow-hidden"
-      style={{
-        width: `${width}px`,
-        minHeight: `${height}px`,
-      }}
+      className={`relative flex flex-col items-center overflow-hidden ${completeSizeString}`}
     >
       {/* Arrows */}
       <div className="flex gap-2">
@@ -64,21 +77,19 @@ export default function ImageSlider({
 
       {/* Image Placeholder */}
       <div
+        id="image-placeholder"
+        className={completeSizeString}
         style={{
-          width: `${width}px`,
-          height: `${height}px`,
           marginTop: 20,
         }}
       ></div>
 
       {/* Images */}
       <div
-        className="absolute top-8 left-0"
+        className={`absolute top-8 left-0 ${completeSizeString}`}
         style={{
           transform: `translateX(-${currentImage * 100}%)`,
           transition: "transform 0.5s ease-in-out",
-          width: `${width}px`,
-          height: `${height}px`,
         }}
       >
         {imageLinks.map((link, index) => (
@@ -92,8 +103,8 @@ export default function ImageSlider({
             <Image
               src={projectsBucket.getPublicUrl(link).data.publicUrl}
               alt="Project Snapshot"
-              width={900}
-              height={600}
+              width={width}
+              height={height || autoHeight}
               className="rounded mb-4"
             />
             {handleDelete && (
