@@ -52,15 +52,28 @@ export default function ImageSlider({
     "2xl": "2xl:w-[900px] 2xl:h-[600px] 2xl:min-h-[600px]",
   };
 
-  // combine all sizes into one string
   let completeSizeString = "w-[240px] h-[160px] min-h-[160px] ";
   for (const key in sizes) {
     completeSizeString += `${sizes[key]} `;
   }
 
+  const outerSizes: { [key: string]: string } = {
+    xs: "xs:w-[300px] xs:h-[280px] xs:min-h-[200px]",
+    sm: "sm:w-[420px] sm:h-[350px] sm:min-h-[280px]",
+    md: "md:w-[540px] md:h-[450px] md:min-h-[360px]",
+    lg: "lg:w-[660px] lg:h-[550px] lg:min-h-[440px]",
+    xl: "xl:w-[780px] xl:h-[650px] xl:min-h-[520px]",
+    "2xl": "2xl:w-[900px] 2xl:h-[750px] 2xl:min-h-[600px]",
+  };
+
+  let completeOuterSizeString = "w-[240px] h-[240px] min-h-[160px] ";
+  for (const key in outerSizes) {
+    completeOuterSizeString += `${outerSizes[key]} `;
+  }
+
   return (
     <div
-      className={`relative flex flex-col items-center overflow-hidden ${completeSizeString}`}
+      className={`relative flex flex-col items-center overflow-hidden ${completeOuterSizeString}`}
     >
       {/* Arrows */}
       <div className="flex gap-2">
@@ -80,7 +93,7 @@ export default function ImageSlider({
         id="image-placeholder"
         className={completeSizeString}
         style={{
-          marginTop: 20,
+          marginTop: 50,
         }}
       ></div>
 
@@ -124,12 +137,12 @@ export default function ImageSlider({
       </div>
 
       {/* Dots */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 -mt-8">
         {imageLinks.map((link, index) => (
           <button
             key={link}
             type="button"
-            className={`w-3 h-3 rounded-full ${
+            className={`w-3 h-3 hover:scale-125 rounded-full ${
               index === currentImage ? "bg-slate-600" : "bg-slate-400"
             }`}
             onClick={() => setCurrentImage(index)}

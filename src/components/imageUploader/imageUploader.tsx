@@ -24,7 +24,7 @@ export default function ImageUploader({
       const file = event.target.files[0];
       const fileExt = file.name.split(".").pop();
       const fileName = file.name.split(".")[0];
-      const filePath = `${projectName}/${fileName}.${fileExt}`;
+      const filePath = `${projectName.toLowerCase()}/${fileName}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from("projects")

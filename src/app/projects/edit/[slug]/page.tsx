@@ -3,6 +3,11 @@
 import { useEffect, useState } from "react";
 import { updateProject } from "@/app/projects/actions";
 import { useFormState, useFormStatus } from "react-dom";
+import ImageUploader from "@/components/imageUploader/imageUploader";
+import ImageSlider from "@/components/imageSlider/imageSlider";
+import { supabase } from "@/lib/supabase";
+
+const projectsBucket = supabase.storage.from("projects");
 
 const initialState = {
   message: null,
@@ -12,7 +17,6 @@ const initialState = {
   imageLinks: null,
 };
 
-// TODO: Add image upload
 // TODO: Add success message (toast)
 export default function Page({ params }: { params: { slug: string } }) {
   const [state, formAction] = useFormState(updateProject, initialState);
@@ -32,6 +36,21 @@ export default function Page({ params }: { params: { slug: string } }) {
     imageLinks: [],
   });
 
+  function handleDeleteImage(imageLink: string) {
+    projectsBucket
+      .remove([imageLink])
+      .then((res) => {
+        console.log(res);
+        setProject((prev) => ({
+          ...prev,
+          imageLinks: prev.imageLinks.filter((link) => link !== imageLink),
+        }));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   useEffect(() => {
     if (params.slug) {
       const fetchProject = async () => {
@@ -48,7 +67,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
   return (
     <div className="flex flex-col items-center">
-      <h1 className="mt-8 text-2xl">Add Project</h1>
+      <h1 className="mt-8 text-2xl">Edit Project</h1>
 
       <form
         action={formAction}
@@ -106,7 +125,42 @@ export default function Page({ params }: { params: { slug: string } }) {
         />
         <p className="text-red-400">{state?.tags?._errors[0]}</p>
 
-        {/* Images */}
+        {/* Image Upload */}
+        <input
+          type="text"
+          hidden
+          name="imageLinks"
+          value={project.imageLinks.join(" ")}
+          onChange={(e) => {
+            console.log("Image Links:", project.imageLinks);
+            console.log(e.target.value);
+          }}
+        />
+        <div className="my-6">
+          <ImageUploader
+            projectName={project.title}
+            onUpload={(url) => {
+              setProject((prev) => {
+                if (prev.imageLinks.join(" ") !== "") {
+                  const newImageLinks = prev.imageLinks.join(" ") + " " + url;
+                  return { ...prev, imageLinks: newImageLinks.split(" ") };
+                } else {
+                  return { ...prev, imageLinks: [url] };
+                }
+              });
+            }}
+          />
+        </div>
+
+        {/* Image Slider */}
+        <div className="self-center">
+          {project.imageLinks.join(" ") !== "" && (
+            <ImageSlider
+              imageLinks={project.imageLinks.filter((link) => link !== "")}
+              handleDelete={handleDeleteImage}
+            />
+          )}
+        </div>
 
         <button
           type="submit"
