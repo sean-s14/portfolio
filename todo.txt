@@ -2,3 +2,4 @@
 - Ensure only admin can login
 - Ensure only admin can modify data in database
 - NextAuth does not see session after redirecting
+- Make image in ImageSlider expandable
