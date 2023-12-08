@@ -13,4 +13,12 @@ export const {
   debug: process.env.NODE_ENV === "development",
   adapter: PrismaAdapter(prisma),
   providers: [GitHub],
+  callbacks: {
+    session: async ({ session, user }) => {
+      if (session.user) {
+        session.user.admin = user.admin;
+      }
+      return Promise.resolve(session);
+    },
+  },
 } satisfies NextAuthConfig);

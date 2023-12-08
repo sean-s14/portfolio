@@ -37,7 +37,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
       </Link>
       <div className="w-4/5 max-w-full relative">
         {/* Edit Button */}
-        {session?.user?.email && (
+        {session?.user?.admin && (
           <Link
             href={`/projects/edit/${params.slug}`}
             className="absolute right-0 top-0 bg-blue-400 rounded py-1 px-2"

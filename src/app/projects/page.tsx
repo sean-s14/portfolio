@@ -16,7 +16,7 @@ export default async function Page() {
     <div className="flex flex-col min-w-full min-h-[300px] p-10">
       <div className="flex gap-10 items-center justify-between">
         <div className="mt-4">All Posts</div>
-        {session?.user?.email && (
+        {session?.user?.admin && (
           <Link
             href="/projects/create"
             className="px-2 py-1 border rounded h-fit"
