@@ -12,6 +12,7 @@ const projectsBucket = supabase.storage.from("projects");
 const initialState = {
   message: null,
   title: null,
+  url: null,
   description: null,
   tags: null,
   imageLinks: null,
@@ -25,12 +26,14 @@ export default function Page({ params }: { params: { slug: string } }) {
   const [project, setProject] = useState<{
     id: string;
     title: string;
+    url: string;
     description: string;
     tags: string[];
     imageLinks: string[];
   }>({
     id: "",
     title: "",
+    url: "",
     description: "",
     tags: [],
     imageLinks: [],
@@ -96,6 +99,19 @@ export default function Page({ params }: { params: { slug: string } }) {
           defaultValue={project?.title}
         />
         <p className="text-red-400">{state?.title?._errors[0]}</p>
+
+        <label htmlFor="url" className="mt-6 mb-1">
+          Link
+        </label>
+        <input
+          type="text"
+          id="url"
+          name="url"
+          className="bg-slate-600/50 p-1 rounded"
+          required
+          defaultValue={project?.url}
+        />
+        <p className="text-red-400">{state?.url?._errors[0]}</p>
 
         <label htmlFor="description" className="mt-6 mb-1">
           Description

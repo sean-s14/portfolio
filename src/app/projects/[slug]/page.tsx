@@ -5,6 +5,8 @@ import ImageSlider from "@/components/imageSlider/imageSlider";
 
 type Project = {
   title: string;
+  slug: string;
+  url: string;
   description: string;
   tags: string[];
   imageLinks: string[];
@@ -53,6 +55,20 @@ export default async function Page({ params }: { params: { slug: string } }) {
         <div className="text-white/60 text-xs mt-2">
           {new Date(project.createdAt).toDateString()}
         </div>
+
+        {/* Link */}
+        {project?.url && (
+          <div className="mt-4">
+            <span>Visit at </span>
+            <Link
+              href={project.url}
+              target="_blank"
+              className="text-blue-400 hover:text-blue-300"
+            >
+              {project.url}
+            </Link>
+          </div>
+        )}
 
         {/* Images */}
         <div>

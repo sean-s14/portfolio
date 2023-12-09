@@ -15,6 +15,7 @@ export async function createProject(prevState: any, formData: FormData) {
         message: "Title must be at least 6 characters long",
       })
       .max(50),
+    url: z.string().url(),
     description: z.string(),
     imageLinks: z.string(),
     tags: z.string(),
@@ -22,6 +23,7 @@ export async function createProject(prevState: any, formData: FormData) {
 
   const parse = schema.safeParse({
     title: formData.get("title"),
+    url: formData.get("url"),
     description: formData.get("description"),
     imageLinks: formData.get("imageLinks") || "",
     tags: formData.get("tags"),
@@ -43,6 +45,7 @@ export async function createProject(prevState: any, formData: FormData) {
       data: {
         title: data.title,
         slug: slugify(data.title, { lower: true }),
+        url: data.url,
         description: data.description,
         imageLinks: data.imageLinks.split(" "),
         tags: data.tags.split(" "),
@@ -71,6 +74,7 @@ export async function updateProject(prevState: any, formData: FormData) {
         message: "Title must be at least 6 characters long",
       })
       .max(50),
+    url: z.string().url(),
     description: z.string(),
     imageLinks: z.string(),
     tags: z.string(),
@@ -79,6 +83,7 @@ export async function updateProject(prevState: any, formData: FormData) {
   const parse = schema.safeParse({
     id: formData.get("id"),
     title: formData.get("title"),
+    url: formData.get("url"),
     description: formData.get("description"),
     imageLinks: formData.get("imageLinks") || "",
     tags: formData.get("tags"),
@@ -103,6 +108,7 @@ export async function updateProject(prevState: any, formData: FormData) {
       data: {
         title: data.title,
         slug: slug,
+        url: data.url,
         description: data.description,
         imageLinks: data.imageLinks.split(" "),
         tags: data.tags.split(" "),
