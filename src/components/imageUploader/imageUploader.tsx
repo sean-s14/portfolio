@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabase";
+import slugify from "slugify";
 
 export default function ImageUploader({
   projectName,
@@ -24,7 +25,9 @@ export default function ImageUploader({
       const file = event.target.files[0];
       const fileExt = file.name.split(".").pop();
       const fileName = file.name.split(".")[0];
-      const filePath = `${projectName.toLowerCase()}/${fileName}.${fileExt}`;
+      const filePath = `${slugify(projectName, {
+        lower: true,
+      })}/${fileName}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from("projects")

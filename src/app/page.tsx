@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useAnimation } from "framer-motion";
 import Chevron from "@/icons/chevron";
 import Tilt from "react-parallax-tilt";
 import Link from "next/link";
+import Image from "next/image";
+import { supabase } from "@/lib/supabase";
+import { Exo_2 } from "next/font/google";
 
 // Icons for skills
 import ReactIcon from "@/icons/skills/react";
@@ -26,6 +29,8 @@ import GmailIcon from "@/icons/social/gmail";
 import TelegramIcon from "@/icons/social/telegram";
 import LinkedInIcon from "@/icons/social/linkedin";
 import GitHubIcon from "@/icons/social/github";
+
+const exo2 = Exo_2({ subsets: ["latin"] });
 
 const name = "Sean Stocker";
 const title = "Full Stack Web Developer";
@@ -149,6 +154,8 @@ const socialIcons = [
   },
 ];
 
+const projectsBucket = supabase.storage.from("projects");
+
 // TODO: Add backgrounds to each section
 
 export default function Home() {
@@ -266,7 +273,7 @@ function About() {
     <section
       ref={ref}
       id="about"
-      className="min-h-screen min-w-full flex items-center justify-center border-b px-4 sm:px-10"
+      className="min-h-screen min-w-full flex items-center justify-center px-4 sm:px-10"
     >
       <div className="w-full flex gap-4 xs:gap-8 flex-wrap justify-center">
         {[
@@ -313,14 +320,65 @@ function About() {
 }
 
 function Projects() {
+  const [projects, setProjects] = useState<
+    | {
+        id: string;
+        title: string;
+        slug: string;
+        url: string;
+        description: string;
+        tags: string[];
+        imageLinks: string[];
+      }[]
+    | null
+  >(null);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const res = await fetch(
+        process.env.NEXT_PUBLIC_BASE_URL + `/projects/api`
+      );
+      if (!res.ok) throw new Error("Failed to fetch project");
+      const projects = await res.json();
+      setProjects(projects);
+    };
+    fetchProjects();
+  }, []);
+
   return (
     <section
       id="projects"
-      className="min-h-screen min-w-full flex items-center justify-center border-b"
+      className="min-h-screen min-w-full flex flex-col items-center justify-center p-4 sm:p-8"
     >
-      <Link href="/projects" className="hover:text-blue-200">
-        View all projects
+      <Link
+        href="/projects"
+        className={
+          exo2.className +
+          " text-xl tracking-widest mb-6 flex hover:text-blue-200 p-2 px-4 rounded"
+        }
+      >
+        <span>VIEW ALL PROJECTS</span>
+        <Chevron className="w-4 ml-2 fill-white -rotate-90" />
       </Link>
+
+      {/* TODO: Add transition */}
+      {/* TODO: Add links to project images */}
+      <div className="grid grid-cols-2 gap-4 sm:gap-8">
+        {projects?.slice(0, 4).map((project, index) => (
+          <Image
+            key={`${project.title}-${index}`}
+            src={
+              projectsBucket.getPublicUrl(`${project.slug}/main.png`).data
+                .publicUrl
+            }
+            alt={project.title}
+            priority
+            width={390}
+            height={260}
+            className="rounded-lg"
+          />
+        ))}
+      </div>
     </section>
   );
 }
