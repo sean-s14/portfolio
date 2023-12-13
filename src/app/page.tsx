@@ -333,6 +333,17 @@ function Projects() {
     | null
   >(null);
 
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  const mainControls = useAnimation();
+
+  useEffect(() => {
+    if (isInView) {
+      mainControls.start("visible");
+    }
+  }, [isInView, mainControls]);
+
   useEffect(() => {
     const fetchProjects = async () => {
       const res = await fetch(
@@ -348,35 +359,53 @@ function Projects() {
   return (
     <section
       id="projects"
+      ref={ref}
       className="min-h-screen min-w-full flex flex-col items-center justify-center p-4 sm:p-8"
     >
       <Link
         href="/projects"
         className={
           exo2.className +
-          " text-xl tracking-widest mb-6 flex hover:text-blue-200 p-2 px-4 rounded"
+          " text-xl tracking-widest mb-6 flex hover:text-blue-300 [&>svg]:hover:fill-blue-300 p-2 px-4 rounded"
         }
       >
         <span>VIEW ALL PROJECTS</span>
         <Chevron className="w-4 ml-2 fill-white -rotate-90" />
       </Link>
 
-      {/* TODO: Add transition */}
-      {/* TODO: Add links to project images */}
+      {/* TODO: Add project name and description when hovering */}
       <div className="grid grid-cols-2 gap-4 sm:gap-8">
         {projects?.slice(0, 4).map((project, index) => (
-          <Image
-            key={`${project.title}-${index}`}
-            src={
-              projectsBucket.getPublicUrl(`${project.slug}/main.png`).data
-                .publicUrl
-            }
-            alt={project.title}
-            priority
-            width={390}
-            height={260}
-            className="rounded-lg"
-          />
+          <motion.div
+            key={index}
+            variants={{
+              hidden: { opacity: 0, y: 100 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: { duration: 1, delay: 0.4 + index * 0.4 },
+              },
+            }}
+            initial="hidden"
+            animate={mainControls}
+            className="relative [&>div]:hover:bg-black/30"
+          >
+            <div className="w-full h-full absolute top-0 left-0 pointer-events-none transition-colors duration-300"></div>
+            <Link href={`/projects/${project.slug}`}>
+              <Image
+                key={`${project.title}-${index}`}
+                src={
+                  projectsBucket.getPublicUrl(`${project.slug}/main.png`).data
+                    .publicUrl
+                }
+                alt={project.title}
+                priority
+                width={390}
+                height={260}
+                className="rounded-lg"
+              />
+            </Link>
+          </motion.div>
         ))}
       </div>
     </section>
