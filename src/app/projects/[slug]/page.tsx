@@ -2,8 +2,10 @@ import Chevron from "@/icons/chevron";
 import Link from "next/link";
 import { auth } from "@/auth";
 import ImageSlider from "@/components/imageSlider/imageSlider";
+import { deleteProject } from "@/app/projects/actions";
 
 type Project = {
+  id: string;
   title: string;
   slug: string;
   url: string;
@@ -38,15 +40,35 @@ export default async function Page({ params }: { params: { slug: string } }) {
         <span>All Projects</span>
       </Link>
       <div className="w-4/5 max-w-full relative">
-        {/* Edit Button */}
-        {session?.user?.admin && (
-          <Link
-            href={`/projects/edit/${params.slug}`}
-            className="absolute right-0 top-0 bg-blue-400 rounded py-1 px-2"
-          >
-            Edit
-          </Link>
-        )}
+        {/* Edit & Delete Buttons */}
+        <div className="absolute right-0 top-0 flex">
+          {/* Edit Button */}
+          {session?.user?.admin && (
+            <Link
+              href={`/projects/edit/${params.slug}`}
+              className="border border-blue-400 bg-blue-400/20 hover:bg-blue-400/40 text-blue-400 rounded py-1 px-2"
+            >
+              Edit
+            </Link>
+          )}
+
+          {/* TODO: Create confirmation popup */}
+          {/* Delete Button */}
+          <form action={deleteProject}>
+            <input
+              type="text"
+              name="id"
+              className="hidden"
+              defaultValue={project?.id}
+            />
+            <button
+              type="submit"
+              className="border border-red-400 bg-red-400/20 hover:bg-red-400/40 text-red-400 rounded py-1 px-2 ml-2"
+            >
+              Delete
+            </button>
+          </form>
+        </div>
 
         {/* Title */}
         <h1 className="text-3xl font-semibold">{project.title}</h1>

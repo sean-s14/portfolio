@@ -128,3 +128,36 @@ export async function updateProject(prevState: any, formData: FormData) {
   revalidatePath(`/projects/${slug}`);
   redirect(`/projects/${slug}`);
 }
+
+export async function deleteProject(formData: FormData) {
+  const schema = z.object({
+    id: z.string(),
+  });
+
+  const parse = schema.safeParse({
+    id: formData.get("id"),
+  });
+
+  if (!parse.success) {
+    console.log(parse.error);
+    const formatted = parse.error.format();
+    /* {
+      title: { _errors: [ 'Expected string, received number' ] }
+    } */
+    return formatted;
+  }
+
+  const data = parse.data;
+
+  try {
+    await prisma.project.delete({
+      where: { id: data.id },
+    });
+  } catch (e) {
+    console.log(e);
+    return { message: "Failed to delete project" };
+  }
+
+  revalidatePath("/projects");
+  redirect("/projects");
+}
