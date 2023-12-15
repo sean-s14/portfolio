@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useAnimation } from "framer-motion";
 import Chevron from "@/icons/chevron";
+import { getProjects } from "@/app/projects/actions";
 import Tilt from "react-parallax-tilt";
 import Link from "next/link";
 import Image from "next/image";
@@ -324,9 +325,11 @@ function Projects() {
         title: string;
         slug: string;
         url: string;
-        description: string;
+        description: string | null;
         tags: string[];
         imageLinks: string[];
+        createdAt: Date;
+        updatedAt: Date;
       }[]
     | null
   >(null);
@@ -343,15 +346,11 @@ function Projects() {
   }, [isInView, mainControls]);
 
   useEffect(() => {
-    const fetchProjects = async () => {
-      const res = await fetch(
-        process.env.NEXT_PUBLIC_BASE_URL + `/projects/api`
-      );
-      if (!res.ok) throw new Error("Failed to fetch project");
-      const projects = await res.json();
+    const updateProjects = async () => {
+      const projects = await getProjects();
       setProjects(projects);
     };
-    fetchProjects();
+    updateProjects();
   }, []);
 
   return (

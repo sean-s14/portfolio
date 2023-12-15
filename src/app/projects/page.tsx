@@ -1,12 +1,6 @@
 import { auth } from "@/auth";
 import Link from "next/link";
-
-async function getProjects() {
-  const res = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/projects/api");
-  if (!res.ok) throw new Error("Failed to fetch projects");
-  const projects = await res.json();
-  return projects;
-}
+import { getProjects } from "./actions";
 
 // TODO: Improve page by changing list of projects to a grid of cards
 export default async function Page() {

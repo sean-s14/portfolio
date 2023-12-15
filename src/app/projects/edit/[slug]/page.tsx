@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { updateProject } from "@/app/projects/actions";
+import { updateProject, getProject } from "@/app/projects/actions";
 import { useFormState, useFormStatus } from "react-dom";
 import ImageUploader from "@/components/imageUploader/imageUploader";
 import ImageSlider from "@/components/imageSlider/imageSlider";
@@ -26,17 +26,23 @@ export default function Page({ params }: { params: { slug: string } }) {
   const [project, setProject] = useState<{
     id: string;
     title: string;
+    slug: string;
     url: string;
-    description: string;
+    description: string | null;
     tags: string[];
     imageLinks: string[];
-  }>({
+    createdAt: Date;
+    updatedAt: Date;
+  } | null>({
     id: "",
     title: "",
+    slug: "",
     url: "",
     description: "",
     tags: [],
     imageLinks: [],
+    createdAt: new Date(),
+    updatedAt: new Date(),
   });
 
   function handleDeleteImage(imageLink: string) {
@@ -44,9 +50,11 @@ export default function Page({ params }: { params: { slug: string } }) {
       .remove([imageLink])
       .then((res) => {
         console.log(res);
-        setProject((prev) => ({
+        setProject((prev: any) => ({
           ...prev,
-          imageLinks: prev.imageLinks.filter((link) => link !== imageLink),
+          imageLinks: prev.imageLinks.filter(
+            (link: string) => link !== imageLink
+          ),
         }));
       })
       .catch((err) => {
@@ -57,11 +65,7 @@ export default function Page({ params }: { params: { slug: string } }) {
   useEffect(() => {
     if (params.slug) {
       const fetchProject = async () => {
-        const res = await fetch(
-          process.env.NEXT_PUBLIC_BASE_URL + `/projects/api/${params.slug}`
-        );
-        if (!res.ok) throw new Error("Failed to fetch project");
-        const project = await res.json();
+        const project = await getProject(params.slug);
         setProject(project);
       };
       fetchProject();
@@ -122,7 +126,7 @@ export default function Page({ params }: { params: { slug: string } }) {
           cols={30}
           rows={4}
           className="bg-slate-600/50 p-1 rounded"
-          defaultValue={project?.description}
+          defaultValue={project?.description || ""}
         ></textarea>
         <p className="text-red-400">{state?.description?._errors[0]}</p>
 
@@ -142,35 +146,40 @@ export default function Page({ params }: { params: { slug: string } }) {
         <p className="text-red-400">{state?.tags?._errors[0]}</p>
 
         {/* Image Upload */}
-        <input
-          type="text"
-          hidden
-          name="imageLinks"
-          value={project.imageLinks.join(" ")}
-          onChange={(e) => {
-            console.log("Image Links:", project.imageLinks);
-            console.log(e.target.value);
-          }}
-        />
-        <div className="my-6">
-          <ImageUploader
-            projectName={project.title}
-            onUpload={(url) => {
-              setProject((prev) => {
-                if (prev.imageLinks.join(" ") !== "") {
-                  const newImageLinks = prev.imageLinks.join(" ") + " " + url;
-                  return { ...prev, imageLinks: newImageLinks.split(" ") };
-                } else {
-                  return { ...prev, imageLinks: [url] };
-                }
-              });
-            }}
-          />
-        </div>
+        {project?.imageLinks && (
+          <>
+            <input
+              type="text"
+              hidden
+              name="imageLinks"
+              value={project.imageLinks.join(" ")}
+              onChange={(e) => {
+                console.log("Image Links:", project?.imageLinks);
+                console.log(e.target.value);
+              }}
+            />
+            <div className="my-6">
+              <ImageUploader
+                projectName={project.title}
+                onUpload={(url) => {
+                  setProject((prev: any) => {
+                    if (prev?.imageLinks.join(" ") !== "") {
+                      const newImageLinks =
+                        prev?.imageLinks.join(" ") + " " + url;
+                      return { ...prev, imageLinks: newImageLinks.split(" ") };
+                    } else {
+                      return { ...prev, imageLinks: [url] };
+                    }
+                  });
+                }}
+              />
+            </div>
+          </>
+        )}
 
         {/* Image Slider */}
         <div className="self-center">
-          {project.imageLinks.join(" ") !== "" && (
+          {project?.imageLinks && project.imageLinks.join(" ") !== "" && (
             <ImageSlider
               imageLinks={project.imageLinks.filter((link) => link !== "")}
               handleDelete={handleDeleteImage}

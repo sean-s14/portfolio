@@ -161,3 +161,23 @@ export async function deleteProject(formData: FormData) {
   revalidatePath("/projects");
   redirect("/projects");
 }
+
+export async function getProjects() {
+  const projects = await prisma.project.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return projects;
+}
+
+export async function getProject(slug: string) {
+  const project = await prisma.project.findUnique({
+    where: {
+      slug: slug,
+    },
+  });
+
+  return project;
+}

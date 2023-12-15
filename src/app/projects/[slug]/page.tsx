@@ -3,28 +3,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import ImageSlider from "@/components/imageSlider/imageSlider";
 import { deleteProject } from "@/app/projects/actions";
-
-type Project = {
-  id: string;
-  title: string;
-  slug: string;
-  url: string;
-  description: string;
-  tags: string[];
-  imageLinks: string[];
-  createdAt: string;
-  updatedAt: string;
-};
-
-async function getProject(slug: string): Promise<Project> {
-  const res = await fetch(
-    process.env.NEXT_PUBLIC_BASE_URL + `/projects/api/${slug}`,
-    { next: { revalidate: 3600 } }
-  );
-  if (!res.ok) throw new Error("Failed to fetch project");
-  const project = await res.json();
-  return project;
-}
+import { getProject } from "@/app/projects/actions";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const project = await getProject(params.slug);
@@ -71,11 +50,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl font-semibold">{project.title}</h1>
+        <h1 className="text-3xl font-semibold">{project?.title}</h1>
 
         {/* Date */}
         <div className="text-white/60 text-xs mt-2">
-          {new Date(project.createdAt).toDateString()}
+          {project?.createdAt && new Date(project.createdAt).toDateString()}
         </div>
 
         {/* Link */}
@@ -94,27 +73,28 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
         {/* Images */}
         <div>
-          {project.imageLinks.length > 1 && (
+          {project?.imageLinks && project.imageLinks?.length > 1 && (
             <ImageSlider imageLinks={project.imageLinks} />
           )}
         </div>
 
         {/* Description */}
-        <p className="text-lg mt-10">{project.description}</p>
+        <p className="text-lg mt-10">{project?.description}</p>
 
         {/* Tags */}
         {/* TODO: Make tags clickable */}
         <div className="flex mt-20">
           <span className="mr-2">Tags:</span>
           <div className="flex gap-2">
-            {project.tags.map((tag: string) => (
-              <span
-                key={tag}
-                className="text-sm bg-gray-200 text-gray-800 font-semibold rounded-full px-4 py-1"
-              >
-                {tag}
-              </span>
-            ))}
+            {project?.tags &&
+              project.tags.map((tag: string) => (
+                <span
+                  key={tag}
+                  className="text-sm bg-gray-200 text-gray-800 font-semibold rounded-full px-4 py-1"
+                >
+                  {tag}
+                </span>
+              ))}
           </div>
         </div>
       </div>
