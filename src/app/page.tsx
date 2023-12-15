@@ -156,11 +156,9 @@ const socialIcons = [
 
 const projectsBucket = supabase.storage.from("projects");
 
-// TODO: Add backgrounds to each section
-
 export default function Home() {
   return (
-    <div className="min-h-full min-w-full flex flex-col items-center justify-center">
+    <div className="min-h-full min-w-full flex flex-col items-center justify-center gap-16">
       {/* Home (Intro) */}
       <h2 className="hidden">Intro</h2>
       <Intro />
@@ -402,7 +400,7 @@ function Projects() {
                 priority
                 width={390}
                 height={260}
-                className="rounded-lg"
+                className="rounded-lg shadow-2xl shadow-neutral-950"
               />
             </Link>
           </motion.div>

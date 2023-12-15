@@ -8,6 +8,7 @@ async function getProjects() {
   return projects;
 }
 
+// TODO: Improve page by changing list of projects to a grid of cards
 export default async function Page() {
   const session = await auth();
   const projects = await getProjects();

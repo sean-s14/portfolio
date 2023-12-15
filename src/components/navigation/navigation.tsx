@@ -37,7 +37,7 @@ export default function Navigation() {
     <nav
       className={
         exo2.className +
-        " h-full flex items-center justify-between border-b px-10 sticky top-0 bg-black/50 backdrop-blur-sm z-10"
+        " h-full flex items-center justify-between border-b px-10 sticky top-0 bg-black/50 backdrop-blur-sm z-10 bg-gradient-to-r from-slate-950 to-neutral-800"
       }
     >
       <Link href="/" className="text-xl flex gap-3">

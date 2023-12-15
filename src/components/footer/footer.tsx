@@ -4,7 +4,7 @@ export default async function Footer() {
   const session = await auth();
 
   return (
-    <footer className="h-full flex gap-4 flex-wrap items-center justify-center border-t px-6">
+    <footer className="h-full flex gap-4 flex-wrap items-center justify-center border-t px- bg-gradient-to-r from-slate-950 to-neutral-800">
       {session?.user?.email ? (
         <form
           action={async () => {

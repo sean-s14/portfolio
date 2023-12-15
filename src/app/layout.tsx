@@ -18,7 +18,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className + " overflow-x-hidden"}>
+      <body
+        className={
+          inter.className +
+          " overflow-x-hidden bg-gradient-to-r from-neutral-950 to-slate-800"
+        }
+      >
         {/* Navigation */}
         <div className="h-12">
           <Navigation />
