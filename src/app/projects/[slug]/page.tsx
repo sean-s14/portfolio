@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import ImageSlider from "@/components/imageSlider/imageSlider";
 import { deleteProject } from "@/app/projects/actions";
 import { getProject } from "@/app/projects/actions";
+import TrashCan from "@/icons/trash-can";
 
 export default async function Page({ params }: { params: { slug: string } }) {
   const project = await getProject(params.slug);
@@ -20,34 +21,35 @@ export default async function Page({ params }: { params: { slug: string } }) {
       </Link>
       <div className="w-4/5 max-w-full relative">
         {/* Edit & Delete Buttons */}
-        <div className="absolute right-0 top-0 flex">
-          {/* Edit Button */}
-          {session?.user?.admin && (
+        {session?.user?.admin && (
+          <div className="fixed right-4 top-20 sm:absolute sm:right-0 sm:top-0 flex h-8">
+            {/* Edit Button */}
             <Link
               href={`/projects/edit/${params.slug}`}
               className="border border-blue-400 bg-blue-400/20 hover:bg-blue-400/40 text-blue-400 rounded py-1 px-2"
             >
+              {/* TODO: Replace this with an edit icon */}
               Edit
             </Link>
-          )}
 
-          {/* TODO: Create confirmation popup */}
-          {/* Delete Button */}
-          <form action={deleteProject}>
-            <input
-              type="text"
-              name="id"
-              className="hidden"
-              defaultValue={project?.id}
-            />
-            <button
-              type="submit"
-              className="border border-red-400 bg-red-400/20 hover:bg-red-400/40 text-red-400 rounded py-1 px-2 ml-2"
-            >
-              Delete
-            </button>
-          </form>
-        </div>
+            {/* TODO: Create confirmation popup */}
+            {/* Delete Button */}
+            <form action={deleteProject}>
+              <input
+                type="text"
+                name="id"
+                className="hidden"
+                defaultValue={project?.id}
+              />
+              <button
+                type="submit"
+                className="border border-red-400 bg-red-400/20 hover:bg-red-400/40 text-red-400 rounded py-1 px-2 ml-2 h-full"
+              >
+                <TrashCan className="w-5 fill-red-300" />
+              </button>
+            </form>
+          </div>
+        )}
 
         {/* Title */}
         <h1 className="text-3xl font-semibold">{project?.title}</h1>

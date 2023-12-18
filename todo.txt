@@ -2,3 +2,6 @@
 - Ensure only admin can modify data in database
 - NextAuth does not see session after redirecting
 - Make image in ImageSlider expandable
+- Display skeleton while image is loading in project detail page
+- Make it so user must scroll further before animation begin in home page
+- Implement functionality to delete all images related to a project if the project itself is deleted

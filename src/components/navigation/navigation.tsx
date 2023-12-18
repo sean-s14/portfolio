@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Exo_2 } from "next/font/google";
-import { motion, useAnimation } from "framer-motion";
+import { motion, useAnimation, animate } from "framer-motion";
 import styles from "./navigation.module.sass";
 import MenuIcon from "@/icons/menu";
 import CloseMenuIcon from "@/icons/close-menu";
@@ -30,7 +30,12 @@ export default function Navigation() {
   }, [menuOpen, mainControls]);
 
   function toggleMenu() {
-    setMenuOpen(!menuOpen);
+    setMenuOpen((prev) => {
+      if (prev) {
+        mainControls.stop();
+      }
+      return !prev;
+    });
   }
 
   return (
@@ -61,9 +66,9 @@ export default function Navigation() {
 
       {/* Side Menu */}
       <div
-        className={`flex sm:hidden fixed left-0 top-0 w-full h-screen items-center justify-center bg-slate-900 ${
-          menuOpen ? "translate-x-0" : "translate-x-full"
-        } transition-transform duration-300`}
+        className={`flex sm:hidden fixed top-0 w-full h-screen items-center justify-center bg-slate-900 ${
+          menuOpen ? "right-0" : "right-full"
+        } transition-all duration-300`}
       >
         <div className="absolute top-5 right-5 text-5xl">
           <button onClick={toggleMenu}>
