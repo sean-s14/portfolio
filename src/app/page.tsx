@@ -159,7 +159,7 @@ const projectsBucket = supabase.storage.from("projects");
 
 export default function Home() {
   return (
-    <div className="min-h-full min-w-full flex flex-col items-center justify-center gap-16">
+    <div className="min-h-full min-w-full flex flex-col items-center justify-center">
       {/* Home (Intro) */}
       <h2 className="hidden">Intro</h2>
       <Intro />
@@ -270,11 +270,10 @@ function About() {
 
   return (
     <section
-      ref={ref}
       id="about"
       className="min-h-screen min-w-full flex items-center justify-center px-4 sm:px-10"
     >
-      <div className="w-full flex gap-4 xs:gap-8 flex-wrap justify-center">
+      <div ref={ref} className="w-full flex gap-8 flex-wrap justify-center">
         {[
           { title: "Languages", icons: languageIcons },
           { title: "Frameworks", icons: frameworkIcons },
@@ -294,9 +293,9 @@ function About() {
             animate={mainControls}
             className={`mt-0 ${classNames[index]} `}
           >
-            <Tilt className="w-72 h-[420px] rounded-lg border-2 p-4 px-6 flex flex-col gap-7 text-lg">
+            <Tilt className="w-52 sm:w-72 h-[300px] sm:h-[420px] rounded-lg border p-2 sm:p-4 px-4 sm:px-6 flex flex-col gap-4 sm:gap-7 text-lg shadow-md shadow-slate-400">
               <div>
-                <h3 className="text-xl font-semibold text-center tracking-widest">
+                <h3 className="text-base sm:text-xl font-semibold text-center tracking-widest">
                   {title.toUpperCase()}
                 </h3>
                 <hr className="mt-2" />
@@ -306,8 +305,8 @@ function About() {
                   key={`${name}-${index}`}
                   className="flex items-center gap-6"
                 >
-                  <Icon className="w-10 fill-white" />
-                  <span>{name}</span>
+                  <Icon className="w-8 sm:w-10 fill-white" />
+                  <span className="text-sm sm:text-base">{name}</span>
                 </div>
               ))}
             </Tilt>
@@ -356,7 +355,6 @@ function Projects() {
   return (
     <section
       id="projects"
-      ref={ref}
       className="min-h-screen min-w-full flex flex-col items-center justify-center p-4 sm:p-8"
     >
       <Link
@@ -371,7 +369,7 @@ function Projects() {
       </Link>
 
       {/* TODO: Add project name and description when hovering */}
-      <div className="grid grid-cols-2 gap-4 sm:gap-8">
+      <div ref={ref} className="grid grid-cols-2 gap-4 sm:gap-8">
         {projects?.slice(0, 4).map((project, index) => (
           <motion.div
             key={index}
@@ -423,11 +421,10 @@ function Contact() {
 
   return (
     <section
-      ref={ref}
       id="contact"
       className="min-h-screen min-w-full flex flex-col items-center justify-start pt-64"
     >
-      <div className="grid grid-cols-2 gap-10">
+      <div ref={ref} className="grid grid-cols-2 gap-10">
         {socialIcons.map(({ name, Icon, link }, index) => (
           <motion.div
             key={`${name}-${index}`}
@@ -437,7 +434,7 @@ function Contact() {
                 scale: 1,
                 transition: {
                   duration: 0.8,
-                  delay: 0.8 + index * 0.4,
+                  delay: 0.4 + index * 0.4,
                   type: "spring",
                   ease: "easeOut",
                 },
