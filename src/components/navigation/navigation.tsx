@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Exo_2 } from "next/font/google";
-import { motion, useAnimation, animate } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import styles from "./navigation.module.sass";
 import MenuIcon from "@/icons/menu";
 import CloseMenuIcon from "@/icons/close-menu";
@@ -45,14 +45,18 @@ export default function Navigation() {
         " h-full flex items-center justify-between border-b px-10 sticky top-0 bg-black/50 backdrop-blur-sm z-10 bg-gradient-to-r from-slate-950 to-neutral-800"
       }
     >
-      <Link href="/" className="text-xl flex gap-3">
-        <span>SEAN</span>
-        <span>STOCKER</span>
+      <Link href="/" className="text-xl flex gap-3" aria-label="Sean Stocker">
+        <span aria-hidden="true">SEAN</span>
+        <span aria-hidden="true">STOCKER</span>
       </Link>
       <ul className="hidden sm:flex gap-10">
         {links.map((link) => (
-          <li key={link.id}>
-            <Link href={link.href} className={styles.underline}>
+          <li key={link.id} aria-label={link.label}>
+            <Link
+              href={link.href}
+              className={styles.underline}
+              aria-label={link.label}
+            >
               {link.label.toUpperCase()}
             </Link>
           </li>
@@ -60,7 +64,11 @@ export default function Navigation() {
       </ul>
 
       {/* Side Menu Toggle */}
-      <button className="text-2xl p-2 sm:hidden" onClick={toggleMenu}>
+      <button
+        className="text-2xl p-2 sm:hidden"
+        onClick={toggleMenu}
+        aria-label="Side Menu Toggle Button"
+      >
         <MenuIcon className="w-6 fill-white" />
       </button>
 
@@ -71,13 +79,13 @@ export default function Navigation() {
         } transition-all duration-300`}
       >
         <div className="absolute top-5 right-5 text-5xl">
-          <button onClick={toggleMenu}>
+          <button onClick={toggleMenu} aria-label="Side Menu Close Button">
             <CloseMenuIcon className="w-10 fill-white" />
           </button>
         </div>
-        <ul className="flex flex-col gap-10">
+        <ul className="flex flex-col gap-10" aria-label="Navigation links">
           {links.map((link, index) => (
-            <li key={link.id}>
+            <li key={link.id} aria-label={link.label}>
               <motion.div
                 variants={{
                   hidden: { opacity: 0, x: 50 },
@@ -97,6 +105,7 @@ export default function Navigation() {
                   href={link.href}
                   className={"text-4xl w-full"}
                   onClick={toggleMenu}
+                  aria-label={link.label}
                 >
                   {link.label.toUpperCase()}
                 </a>

@@ -184,6 +184,7 @@ function Intro() {
     <section
       id="home"
       className="min-h-screen min-w-full flex flex-col items-start justify-center px-8 xs:px-16 sm:px-40"
+      aria-label="Intro"
     >
       <motion.div
         variants={wordAnimation}
@@ -192,43 +193,53 @@ function Intro() {
         className="w-full flex flex-col gap-1 xs:gap-2 sm:gap-3"
       >
         {/* Name */}
-        <h3>
-          {name.split("").map((letter, index) => (
-            <motion.span
-              key={index}
-              className="text-3xl xs:text-4xl sm:text-5xl"
-              variants={characterAnimation}
-            >
-              {letter}
-            </motion.span>
-          ))}
+        <h3 aria-label={name}>
+          <div aria-hidden="true">
+            {name.split("").map((letter, index) => (
+              <motion.span
+                key={index}
+                className="text-3xl xs:text-4xl sm:text-5xl"
+                variants={characterAnimation}
+              >
+                {letter}
+              </motion.span>
+            ))}
+          </div>
         </h3>
 
         {/* Title */}
-        <h4>
-          {title.split("").map((letter, index) => (
-            <motion.span
-              key={index}
-              className="text-lg xs:text-xl sm:text-2xl text-gray-400"
-              variants={characterAnimation}
-            >
-              {letter}
-            </motion.span>
-          ))}
+        <h4 aria-label={title}>
+          <div aria-hidden="true">
+            {title.split("").map((letter, index) => (
+              <motion.span
+                key={index}
+                className="text-lg xs:text-xl sm:text-2xl text-gray-400"
+                variants={characterAnimation}
+              >
+                {letter}
+              </motion.span>
+            ))}
+          </div>
         </h4>
 
         {/* Description */}
-        <motion.div variants={wordAnimation2} className="max-w-3xl">
-          {description.split("").map((letter, index) => (
-            <motion.span
-              key={index}
-              className="text-sm xs:text-base sm:text-lg text-gray-300"
-              variants={characterAnimation}
-            >
-              {letter}
-            </motion.span>
-          ))}
-        </motion.div>
+        <div aria-label={description}>
+          <motion.div
+            variants={wordAnimation2}
+            className="max-w-3xl"
+            aria-hidden="true"
+          >
+            {description.split("").map((letter, index) => (
+              <motion.span
+                key={index}
+                className="text-sm xs:text-base sm:text-lg text-gray-300"
+                variants={characterAnimation}
+              >
+                {letter}
+              </motion.span>
+            ))}
+          </motion.div>
+        </div>
 
         {/* Down Arrow */}
         <motion.div
@@ -241,10 +252,12 @@ function Intro() {
             },
           }}
           className="self-center mt-10 xs:mt-32"
+          aria-label="Down Arrow"
         >
           <a
             href="#about"
             className="border border-gray-100 rounded-full h-12 w-12 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-gray-100/30 transition-colors"
+            aria-label="Scroll Down"
           >
             <Chevron className="fill-gray-100 w-1/2 mt-1" />
           </a>
@@ -272,8 +285,13 @@ function About() {
     <section
       id="about"
       className="min-h-screen min-w-full flex items-center justify-center px-4 sm:px-10"
+      aria-label="About"
     >
-      <div ref={ref} className="w-full flex gap-8 flex-wrap justify-center">
+      <div
+        ref={ref}
+        className="w-full flex gap-8 flex-wrap justify-center"
+        aria-label="Skills"
+      >
         {[
           { title: "Languages", icons: languageIcons },
           { title: "Frameworks", icons: frameworkIcons },
@@ -292,9 +310,10 @@ function About() {
             initial="hidden"
             animate={mainControls}
             className={`mt-0 ${classNames[index]} `}
+            aria-label={title}
           >
             <Tilt className="w-52 sm:w-72 h-[300px] sm:h-[420px] rounded-lg border p-2 sm:p-4 px-4 sm:px-6 flex flex-col gap-4 sm:gap-7 text-lg shadow-md shadow-slate-400">
-              <div>
+              <div aria-hidden="true">
                 <h3 className="text-base sm:text-xl font-semibold text-center tracking-widest">
                   {title.toUpperCase()}
                 </h3>
@@ -304,9 +323,12 @@ function About() {
                 <div
                   key={`${name}-${index}`}
                   className="flex items-center gap-6"
+                  aria-label={name}
                 >
                   <Icon className="w-8 sm:w-10 fill-white" />
-                  <span className="text-sm sm:text-base">{name}</span>
+                  <span className="text-sm sm:text-base" aria-hidden="true">
+                    {name}
+                  </span>
                 </div>
               ))}
             </Tilt>
@@ -356,6 +378,7 @@ function Projects() {
     <section
       id="projects"
       className="min-h-screen min-w-full flex flex-col items-center justify-center p-4 sm:p-8"
+      aria-label="Projects"
     >
       <Link
         href="/projects"
@@ -423,8 +446,13 @@ function Contact() {
     <section
       id="contact"
       className="min-h-screen min-w-full flex flex-col items-center justify-start pt-64"
+      aria-label="Contact"
     >
-      <div ref={ref} className="grid grid-cols-2 gap-10">
+      <div
+        ref={ref}
+        className="grid grid-cols-2 gap-10"
+        aria-label="Contact Methods"
+      >
         {socialIcons.map(({ name, Icon, link }, index) => (
           <motion.div
             key={`${name}-${index}`}
@@ -444,6 +472,7 @@ function Contact() {
             animate={mainControls}
           >
             <Link
+              aria-label={name}
               href={link}
               target="_blank"
               rel="noopener noreferrer"
