@@ -193,7 +193,7 @@ function Intro() {
         className="w-full flex flex-col gap-1 xs:gap-2 sm:gap-3"
       >
         {/* Name */}
-        <h3 aria-label={name}>
+        <h3 aria-label={name} tabIndex={0}>
           <div aria-hidden="true">
             {name.split("").map((letter, index) => (
               <motion.span
@@ -208,7 +208,7 @@ function Intro() {
         </h3>
 
         {/* Title */}
-        <h4 aria-label={title}>
+        <h4 aria-label={title} tabIndex={0}>
           <div aria-hidden="true">
             {title.split("").map((letter, index) => (
               <motion.span
@@ -223,7 +223,7 @@ function Intro() {
         </h4>
 
         {/* Description */}
-        <div aria-label={description}>
+        <div aria-label={description} tabIndex={0}>
           <motion.div
             variants={wordAnimation2}
             className="max-w-3xl"
@@ -298,6 +298,7 @@ function About() {
           { title: "Other", icons: otherIcons },
         ].map(({ title, icons }, index) => (
           <motion.div
+            tabIndex={0}
             key={index}
             variants={{
               hidden: { opacity: 0, y: 100 },
@@ -314,7 +315,10 @@ function About() {
           >
             <Tilt className="w-52 sm:w-72 h-[300px] sm:h-[420px] rounded-lg border p-2 sm:p-4 px-4 sm:px-6 flex flex-col gap-4 sm:gap-7 text-lg shadow-md shadow-slate-400">
               <div aria-hidden="true">
-                <h3 className="text-base sm:text-xl font-semibold text-center tracking-widest">
+                <h3
+                  className="text-base sm:text-xl font-semibold text-center tracking-widest"
+                  tabIndex={0}
+                >
                   {title.toUpperCase()}
                 </h3>
                 <hr className="mt-2" />
@@ -326,7 +330,11 @@ function About() {
                   aria-label={name}
                 >
                   <Icon className="w-8 sm:w-10 fill-white" />
-                  <span className="text-sm sm:text-base" aria-hidden="true">
+                  <span
+                    className="text-sm sm:text-base"
+                    aria-hidden="true"
+                    tabIndex={0}
+                  >
                     {name}
                   </span>
                 </div>
@@ -416,7 +424,7 @@ function Projects() {
                   projectsBucket.getPublicUrl(`${project.slug}/main.png`).data
                     .publicUrl
                 }
-                alt={project.title}
+                alt={project.title + " website"}
                 priority
                 width={390}
                 height={260}

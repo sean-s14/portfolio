@@ -28,7 +28,11 @@ export default async function Footer() {
           </button>
         </form>
       )}
-      <span className="text-sm" aria-label="Copyright for Sean Stocker">
+      <span
+        className="text-sm"
+        aria-label="Copyright for Sean Stocker"
+        tabIndex={0}
+      >
         <span aria-hidden="true" className="flex gap-1">
           <span>&copy;</span>
           <span>{new Date().getFullYear()}</span>

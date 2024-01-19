@@ -5,3 +5,4 @@
 - Display skeleton while image is loading in project detail page
 - Implement functionality to delete all images related to a project if the project itself is deleted
 - Improve Accessibility for Project List and Project Detail pages
+- Add progress bar to top of home page to indicate how far down the page the user is
