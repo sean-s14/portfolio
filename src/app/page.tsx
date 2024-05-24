@@ -7,7 +7,6 @@ import { getProjects } from "@/app/projects/actions";
 import Tilt from "react-parallax-tilt";
 import Link from "next/link";
 import Image from "next/image";
-import { supabase } from "@/lib/supabase";
 import { Exo_2 } from "next/font/google";
 
 // Icons for skills
@@ -154,8 +153,6 @@ const socialIcons = [
     link: `https://github.com/${process.env.NEXT_PUBLIC_GITHUB}`,
   },
 ];
-
-const projectsBucket = supabase.storage.from("projects");
 
 export default function Home() {
   return (
@@ -421,8 +418,9 @@ function Projects() {
               <Image
                 key={`${project.title}-${index}`}
                 src={
-                  projectsBucket.getPublicUrl(`${project.slug}/main.png`).data
-                    .publicUrl
+                  project.imageLinks.find((url: string) =>
+                    url.includes("main.png")
+                  ) || ""
                 }
                 alt={project.title + " website"}
                 priority
@@ -456,7 +454,7 @@ function Contact() {
       className="min-h-screen min-w-full flex flex-col items-center justify-start pt-64"
       aria-label="Contact"
     >
-      <div
+      <address
         ref={ref}
         className="grid grid-cols-2 gap-10"
         aria-label="Contact Methods"
@@ -494,7 +492,7 @@ function Contact() {
             </Link>
           </motion.div>
         ))}
-      </div>
+      </address>
     </section>
   );
 }

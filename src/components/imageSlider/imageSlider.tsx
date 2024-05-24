@@ -4,9 +4,6 @@ import { useState } from "react";
 import Image from "next/image";
 import TrashCan from "@/icons/trash-can";
 import Chevron from "@/icons/chevron";
-import { supabase } from "@/lib/supabase";
-
-const projectsBucket = supabase.storage.from("projects");
 
 export default function ImageSlider({
   imageLinks,
@@ -114,7 +111,7 @@ export default function ImageSlider({
             }}
           >
             <Image
-              src={projectsBucket.getPublicUrl(link).data.publicUrl}
+              src={link}
               alt="Project Snapshot"
               width={width}
               height={height || autoHeight}

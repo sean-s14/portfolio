@@ -1,8 +1,14 @@
 - Update README
 - Ensure only admin can modify data in database
 - NextAuth does not see session after redirecting
-- Make image in ImageSlider expandable
-- Display skeleton while image is loading in project detail page
-- Implement functionality to delete all images related to a project if the project itself is deleted
 - Improve Accessibility for Project List and Project Detail pages
 - Add progress bar to top of home page to indicate how far down the page the user is
+
+Images:
+- Do not allow upload of images with a name that already exists
+- Instead of uploading image to AWS immediately, store elsewhere temporarily until form is submitted
+- Make image in ImageSlider expandable
+- Display skeleton while image is loading in project detail page
+
+Issues:
+- On mobile, after opening the side nav, users are still able to scroll down

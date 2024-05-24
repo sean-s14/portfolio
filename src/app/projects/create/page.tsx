@@ -4,10 +4,8 @@ import { useState } from "react";
 import { createProject } from "@/app/projects/actions";
 import { useFormState, useFormStatus } from "react-dom";
 import ImageUploader from "@/components/imageUploader/imageUploader";
-import { supabase } from "@/lib/supabase";
 import ImageSlider from "@/components/imageSlider/imageSlider";
-
-const projectsBucket = supabase.storage.from("projects");
+import { getUnsignedUrl } from "@/helpers/getUnsignedUrl";
 
 const initialState = {
   message: null,
@@ -26,20 +24,12 @@ export default function Page() {
   const [title, setTitle] = useState<string>("");
 
   function handleDeleteImage(imageLink: string) {
-    projectsBucket
-      .remove([imageLink])
-      .then((res) => {
-        console.log(res);
-        setImageLinks((prev) =>
-          prev
-            .split(" ")
-            .filter((link) => link !== imageLink)
-            .join(" ")
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    setImageLinks((prev) =>
+      prev
+        .split(" ")
+        .filter((link) => link !== imageLink)
+        .join(" ")
+    );
   }
 
   return (
@@ -109,7 +99,10 @@ export default function Page() {
           type="text"
           hidden
           name="imageLinks"
-          value={imageLinks}
+          value={imageLinks
+            .split(" ")
+            .map((link) => getUnsignedUrl(link))
+            .join(" ")}
           onChange={(e) => {
             console.log("Image Links:", imageLinks);
             console.log(e.target.value);

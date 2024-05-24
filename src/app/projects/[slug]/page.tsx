@@ -75,9 +75,11 @@ export default async function Page({ params }: { params: { slug: string } }) {
 
         {/* Images */}
         <div>
-          {project?.imageLinks && project.imageLinks?.length > 1 && (
-            <ImageSlider imageLinks={project.imageLinks} />
-          )}
+          {project?.imageLinks &&
+            project.imageLinks?.length > 0 &&
+            project.imageLinks[0] !== "" && (
+              <ImageSlider imageLinks={project.imageLinks} />
+            )}
         </div>
 
         {/* Description */}

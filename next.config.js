@@ -11,7 +11,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "smfxgttyirknezpigqhm.supabase.co",
+        hostname: "dev-portfolio-01.s3.eu-west-2.amazonaws.com",
         port: "",
         pathname: "/**",
       },

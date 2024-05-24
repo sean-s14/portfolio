@@ -1,6 +1,5 @@
 "use client";
 import React, { useState } from "react";
-import { supabase } from "@/lib/supabase";
 import slugify from "slugify";
 
 export default function ImageUploader({
@@ -25,19 +24,24 @@ export default function ImageUploader({
       const file = event.target.files[0];
       const fileExt = file.name.split(".").pop();
       const fileName = file.name.split(".")[0];
-      const filePath = `${slugify(projectName, {
-        lower: true,
-      })}/${fileName}.${fileExt}`;
+      const folder = slugify(projectName, { lower: true });
+      const filePath = `${folder}/${fileName}.${fileExt}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from("projects")
-        .upload(filePath, file);
+      const formData = new FormData();
+      formData.append("file", file, filePath);
 
-      if (uploadError) {
-        throw uploadError;
+      const response = await fetch("/api/projects/images", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (result.error) {
+        throw result.error;
       }
 
-      onUpload(filePath);
+      onUpload(result.signedUrl);
     } catch (error) {
       alert("Error uploading image!");
     } finally {

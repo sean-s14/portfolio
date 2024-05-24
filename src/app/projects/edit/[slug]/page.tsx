@@ -5,9 +5,7 @@ import { updateProject, getProject } from "@/app/projects/actions";
 import { useFormState, useFormStatus } from "react-dom";
 import ImageUploader from "@/components/imageUploader/imageUploader";
 import ImageSlider from "@/components/imageSlider/imageSlider";
-import { supabase } from "@/lib/supabase";
-
-const projectsBucket = supabase.storage.from("projects");
+import { getUnsignedUrl } from "@/helpers/getUnsignedUrl";
 
 const initialState = {
   message: null,
@@ -46,20 +44,10 @@ export default function Page({ params }: { params: { slug: string } }) {
   });
 
   function handleDeleteImage(imageLink: string) {
-    projectsBucket
-      .remove([imageLink])
-      .then((res) => {
-        console.log(res);
-        setProject((prev: any) => ({
-          ...prev,
-          imageLinks: prev.imageLinks.filter(
-            (link: string) => link !== imageLink
-          ),
-        }));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    setProject((prev: any) => ({
+      ...prev,
+      imageLinks: prev.imageLinks.filter((link: string) => link !== imageLink),
+    }));
   }
 
   useEffect(() => {
@@ -78,7 +66,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
       <form
         action={formAction}
-        className="flex flex-col p-4 sm:p-8 w-96 max-w-full"
+        className="flex flex-col p-4 sm:p-8 w-[420px] max-w-full"
       >
         {state?.message && (
           <p className="bg-red-500 text-neutral-100 rounded px-2 py-1 self-center">
@@ -152,7 +140,9 @@ export default function Page({ params }: { params: { slug: string } }) {
               type="text"
               hidden
               name="imageLinks"
-              value={project.imageLinks.join(" ")}
+              value={project.imageLinks
+                .map((link) => getUnsignedUrl(link))
+                .join(" ")}
               onChange={(e) => {
                 console.log("Image Links:", project?.imageLinks);
                 console.log(e.target.value);
@@ -179,7 +169,7 @@ export default function Page({ params }: { params: { slug: string } }) {
 
         {/* Image Slider */}
         <div className="self-center">
-          {project?.imageLinks && project.imageLinks.join(" ") !== "" && (
+          {project?.imageLinks && project.imageLinks[0] !== "" && (
             <ImageSlider
               imageLinks={project.imageLinks.filter((link) => link !== "")}
               handleDelete={handleDeleteImage}
