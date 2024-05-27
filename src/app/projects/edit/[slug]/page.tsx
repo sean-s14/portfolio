@@ -14,6 +14,7 @@ const initialState = {
   description: null,
   tags: null,
   imageLinks: null,
+  images: null,
 };
 
 // TODO: Add success message (toast)
@@ -143,38 +144,23 @@ export default function Page({ params }: { params: { slug: string } }) {
               value={project.imageLinks
                 .map((link) => getUnsignedUrl(link))
                 .join(" ")}
-              onChange={(e) => {
-                console.log("Image Links:", project?.imageLinks);
-                console.log(e.target.value);
-              }}
             />
-            <div className="my-6">
-              <ImageUploader
-                projectName={project.title}
-                onUpload={(url) => {
-                  setProject((prev: any) => {
-                    if (prev?.imageLinks.join(" ") !== "") {
-                      const newImageLinks =
-                        prev?.imageLinks.join(" ") + " " + url;
-                      return { ...prev, imageLinks: newImageLinks.split(" ") };
-                    } else {
-                      return { ...prev, imageLinks: [url] };
-                    }
-                  });
-                }}
-              />
-            </div>
           </>
         )}
 
+        {/* Image Upload */}
+        <div className="my-6">{project?.title && <ImageUploader />}</div>
+
         {/* Image Slider */}
         <div className="self-center">
-          {project?.imageLinks && project.imageLinks[0] !== "" && (
-            <ImageSlider
-              imageLinks={project.imageLinks.filter((link) => link !== "")}
-              handleDelete={handleDeleteImage}
-            />
-          )}
+          {project?.imageLinks &&
+            project.imageLinks?.length > 0 &&
+            project.imageLinks[0] !== "" && (
+              <ImageSlider
+                imageLinks={project.imageLinks.filter((link) => link !== "")}
+                handleDelete={handleDeleteImage}
+              />
+            )}
         </div>
 
         <button

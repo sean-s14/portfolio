@@ -7,11 +7,19 @@ import slugify from "slugify";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getSignedUrl } from "@/helpers/getSignedUrl";
-import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { s3Client } from "@/lib/s3client";
 import { diffArrays } from "@/helpers/diffArrays";
+import { uploadImages, deleteImages } from "@/helpers/s3helpers";
 
 export async function createProject(prevState: any, formData: FormData) {
+  // Compound all objects named 'images' into just one object
+  const images: File[] = [];
+  formData.forEach((obj) => {
+    if (obj instanceof File) {
+      images.push(obj);
+    }
+  });
+  formData.delete("images");
+
   const schema = z.object({
     title: z
       .string()
@@ -21,7 +29,7 @@ export async function createProject(prevState: any, formData: FormData) {
       .max(50),
     url: z.string().url(),
     description: z.string(),
-    imageLinks: z.string(),
+    images: z.array(z.instanceof(File)),
     tags: z.string(),
   });
 
@@ -29,7 +37,7 @@ export async function createProject(prevState: any, formData: FormData) {
     title: formData.get("title"),
     url: formData.get("url"),
     description: formData.get("description"),
-    imageLinks: formData.get("imageLinks") || "",
+    images: images,
     tags: formData.get("tags"),
   });
 
@@ -43,16 +51,27 @@ export async function createProject(prevState: any, formData: FormData) {
   }
 
   const data = parse.data;
+  const slug = slugify(data.title, { lower: true });
+
+  // Upload images to S3
+  try {
+    data.images.length > 0 && (await uploadImages(data.images, slug));
+  } catch (e) {
+    console.error(e);
+  }
 
   try {
+    const imageLinks = data.images.map(
+      (image: File) => `${slug}/${image.name}`
+    );
     await prisma.project.create({
       data: {
         title: data.title,
-        slug: slugify(data.title, { lower: true }),
+        slug: slug,
         url: data.url,
         description: data.description,
-        imageLinks: data.imageLinks.split(" "),
-        tags: data.tags.split(" "),
+        imageLinks: imageLinks,
+        tags: data.tags.trim().split(" "),
       },
     });
   } catch (e) {
@@ -70,6 +89,15 @@ export async function createProject(prevState: any, formData: FormData) {
 }
 
 export async function updateProject(prevState: any, formData: FormData) {
+  // Compound all objects named 'images' into just one object
+  const images: File[] = [];
+  formData.forEach((obj) => {
+    if (obj instanceof File && obj.size > 0) {
+      images.push(obj);
+    }
+  });
+  formData.delete("images");
+
   const schema = z.object({
     id: z.string(),
     title: z
@@ -81,6 +109,7 @@ export async function updateProject(prevState: any, formData: FormData) {
     url: z.string().url(),
     description: z.string(),
     imageLinks: z.string(),
+    images: z.array(z.instanceof(File)),
     tags: z.string(),
   });
 
@@ -90,11 +119,12 @@ export async function updateProject(prevState: any, formData: FormData) {
     url: formData.get("url"),
     description: formData.get("description"),
     imageLinks: formData.get("imageLinks") || "",
-    tags: formData.get("tags"),
+    images: images,
+    tags: formData.get("tags") || "",
   });
 
   if (!parse.success) {
-    console.log(parse.error);
+    console.error(parse.error);
     const formatted = parse.error.format();
     /* {
       title: { _errors: [ 'Expected string, received number' ] }
@@ -105,6 +135,14 @@ export async function updateProject(prevState: any, formData: FormData) {
   const data = parse.data;
   const slug = slugify(data.title, { lower: true });
 
+  // Upload images to S3
+  try {
+    data.images.length > 0 && (await uploadImages(data.images, slug));
+  } catch (e) {
+    console.error(e);
+    return { message: "Failed to upload images" };
+  }
+
   // Delete images from AWS S3 storage
   try {
     const project = await prisma.project.findUnique({
@@ -113,15 +151,10 @@ export async function updateProject(prevState: any, formData: FormData) {
     if (project?.imageLinks) {
       const imagesToDelete = diffArrays(
         project.imageLinks,
-        data.imageLinks.split(" ")
+        data.imageLinks.trim().split(" ")
       );
-      for (let image of imagesToDelete) {
-        const input = {
-          Bucket: process.env.AWS_S3_BUCKET,
-          Key: image,
-        };
-        const command = new DeleteObjectCommand(input);
-        const response = await s3Client.send(command);
+      if (imagesToDelete.length > 0) {
+        await deleteImages(imagesToDelete.join(" ").trim().split(" "));
       }
     }
   } catch (e) {
@@ -130,6 +163,17 @@ export async function updateProject(prevState: any, formData: FormData) {
   }
 
   try {
+    // Combine new and old image links
+    const oldImageLinks =
+      data.imageLinks.trim() !== "" ? data.imageLinks.trim().split(" ") : null;
+
+    const newImageLinks =
+      data.images.length > 0
+        ? data.images.map((image: File) => `${slug}/${image.name}`)
+        : null;
+
+    const imageLinks = (oldImageLinks || []).concat(newImageLinks || []);
+
     await prisma.project.update({
       where: { id: data.id },
       data: {
@@ -137,8 +181,8 @@ export async function updateProject(prevState: any, formData: FormData) {
         slug: slug,
         url: data.url,
         description: data.description,
-        imageLinks: data.imageLinks.split(" "),
-        tags: data.tags.split(" "),
+        imageLinks: imageLinks,
+        tags: data.tags.trim().split(" "),
       },
     });
   } catch (e) {
@@ -181,15 +225,8 @@ export async function deleteProject(formData: FormData) {
     const project = await prisma.project.findUnique({
       where: { id: data.id },
     });
-    if (project?.imageLinks) {
-      for (let image of project.imageLinks) {
-        const input = {
-          Bucket: process.env.AWS_S3_BUCKET,
-          Key: image,
-        };
-        const command = new DeleteObjectCommand(input);
-        const response = await s3Client.send(command);
-      }
+    if (project?.imageLinks && project.imageLinks[0] !== "") {
+      await deleteImages(project.imageLinks);
     }
   } catch (e) {
     console.error(e);
@@ -220,9 +257,11 @@ export async function getProjects() {
   });
 
   for (let project of projects) {
-    if (project.imageLinks.length > 0 && project.imageLinks[0] !== "") {
+    if (project.imageLinks.length > 0) {
       for (let i = 0; i < project.imageLinks.length; i++) {
-        project.imageLinks[i] = await getSignedUrl(project.imageLinks[i]);
+        if (project.imageLinks[i] !== "") {
+          project.imageLinks[i] = await getSignedUrl(project.imageLinks[i]);
+        }
       }
     }
   }
@@ -238,9 +277,11 @@ export async function getProject(slug: string) {
   });
 
   if (project !== null) {
-    if (project.imageLinks.length > 0 && project.imageLinks[0] !== "") {
+    if (project.imageLinks.length > 0) {
       for (let i = 0; i < project.imageLinks.length; i++) {
-        project.imageLinks[i] = await getSignedUrl(project.imageLinks[i]);
+        if (project.imageLinks[i] !== "") {
+          project.imageLinks[i] = await getSignedUrl(project.imageLinks[i]);
+        }
       }
     }
   }

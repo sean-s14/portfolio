@@ -1,79 +1,116 @@
 "use client";
-import React, { useState } from "react";
-import slugify from "slugify";
+import React, { useState, useEffect } from "react";
+import { useDropzone, FileWithPath } from "react-dropzone";
+import Image from "next/image";
+import { FileWithPreview } from "@/types/files";
+
+const thumb = {
+  display: "inline-flex",
+  borderRadius: 2,
+  border: "1px solid #eaeaea",
+  marginBottom: 8,
+  marginRight: 8,
+  width: 150,
+  height: 100,
+  padding: 4,
+};
+
+const thumbInner = {
+  display: "flex",
+  minWidth: 0,
+  overflow: "hidden",
+};
+
+const img = {
+  display: "block",
+};
 
 export default function ImageUploader({
-  projectName,
-  onUpload,
+  onChange,
 }: {
-  projectName: string;
-  onUpload: (url: string) => void;
+  onChange?: (files: FileWithPreview[]) => void;
 }) {
-  const [uploading, setUploading] = useState(false);
+  const [files, setFiles] = useState<FileWithPreview[]>([]);
 
-  const uploadImage: React.ChangeEventHandler<HTMLInputElement> = async (
-    event
-  ) => {
-    try {
-      setUploading(true);
+  const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
+    useDropzone({
+      accept: {
+        "image/*": [],
+      },
+      onDrop: (acceptedFiles: FileWithPath[]) => {
+        setFiles(
+          acceptedFiles.map((file) =>
+            Object.assign(file, {
+              preview: URL.createObjectURL(file),
+            })
+          )
+        );
+      },
+    });
 
-      if (!event.target.files || event.target.files.length === 0) {
-        throw new Error("You must select an image to upload.");
-      }
+  useEffect(() => {
+    onChange && onChange(files);
+  }, [files, onChange]);
 
-      const file = event.target.files[0];
-      const fileExt = file.name.split(".").pop();
-      const fileName = file.name.split(".")[0];
-      const folder = slugify(projectName, { lower: true });
-      const filePath = `${folder}/${fileName}.${fileExt}`;
+  const fileList = acceptedFiles.map((file: FileWithPath) => (
+    <li key={file.path}>
+      {file.path} - {Math.ceil(file.size / 1024)} kb
+    </li>
+  ));
 
-      const formData = new FormData();
-      formData.append("file", file, filePath);
-
-      const response = await fetch("/api/projects/images", {
-        method: "POST",
-        body: formData,
-      });
-
-      const result = await response.json();
-
-      if (result.error) {
-        throw result.error;
-      }
-
-      onUpload(result.signedUrl);
-    } catch (error) {
-      alert("Error uploading image!");
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const id = Math.random().toString(36).substring(2);
+  const thumbnails = files.map((file) => (
+    <div style={thumb} key={file.name}>
+      <div style={thumbInner}>
+        <Image
+          src={file.preview}
+          alt={file.name}
+          style={img}
+          width={600}
+          height={400}
+          // Revoke data uri after image is loaded
+          onLoad={() => {
+            URL.revokeObjectURL(file.preview);
+          }}
+        />
+      </div>
+    </div>
+  ));
 
   return (
     <div>
-      <label
-        className={`${
-          projectName === ""
-            ? "opacity-50 cursor-not-allowed"
-            : "opacity-100 cursor-pointer"
-        } bg-slate-700 rounded px-3 py-2`}
-        htmlFor={id}
+      <div
+        {...getRootProps({
+          className:
+            "border-2 border-dashed border-slate-400 rounded p-4 bg-slate-600/50 text-center",
+        })}
       >
-        {uploading ? "Uploading ..." : "Upload Snapshot"}
-      </label>
-      <input
+        <input
+          {...getInputProps({
+            name: "images",
+          })}
+        />
+        {isDragActive ? (
+          <p>Drop the files here ...</p>
+        ) : (
+          <p>Drag &#39;n&#39; drop files here, or click to select files</p>
+        )}
+      </div>
+      {files.length > 0 && (
+        <>
+          <h4 className="mt-4 text-gray-300 text-lg">Files</h4>
+          <ul>{fileList}</ul>
+        </>
+      )}
+      <aside
         style={{
-          visibility: "hidden",
-          position: "absolute",
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          marginTop: 16,
         }}
-        type="file"
-        id={id}
-        accept="image/*"
-        onChange={uploadImage}
-        disabled={uploading || projectName === ""}
-      />
+      >
+        {thumbnails}
+      </aside>
     </div>
   );
 }

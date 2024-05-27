@@ -6,7 +6,6 @@
 
 Images:
 - Do not allow upload of images with a name that already exists
-- Instead of uploading image to AWS immediately, store elsewhere temporarily until form is submitted
 - Make image in ImageSlider expandable
 - Display skeleton while image is loading in project detail page
 

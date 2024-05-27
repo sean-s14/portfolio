@@ -4,8 +4,6 @@ import { useState } from "react";
 import { createProject } from "@/app/projects/actions";
 import { useFormState, useFormStatus } from "react-dom";
 import ImageUploader from "@/components/imageUploader/imageUploader";
-import ImageSlider from "@/components/imageSlider/imageSlider";
-import { getUnsignedUrl } from "@/helpers/getUnsignedUrl";
 
 const initialState = {
   message: null,
@@ -13,24 +11,14 @@ const initialState = {
   url: null,
   description: null,
   tags: null,
-  imageLinks: null,
+  images: null,
 };
 
 // TODO: Add success message (toast)
 export default function Page() {
   const [state, formAction] = useFormState(createProject, initialState);
   const { pending } = useFormStatus();
-  const [imageLinks, setImageLinks] = useState<string>("");
   const [title, setTitle] = useState<string>("");
-
-  function handleDeleteImage(imageLink: string) {
-    setImageLinks((prev) =>
-      prev
-        .split(" ")
-        .filter((link) => link !== imageLink)
-        .join(" ")
-    );
-  }
 
   return (
     <div className="flex flex-col items-center p-4">
@@ -38,7 +26,7 @@ export default function Page() {
 
       <form action={formAction} className="flex flex-col w-[420px] max-w-full">
         {state?.message && (
-          <p className="bg-red-500 text-neutral-100 rounded px-2 py-1 self-center">
+          <p className="mt-2 bg-red-500 text-neutral-100 rounded px-2 py-1 self-center">
             {state.message}
           </p>
         )}
@@ -95,41 +83,9 @@ export default function Page() {
         <p className="text-red-400">{state?.tags?._errors[0]}</p>
 
         {/* Image Upload */}
-        <input
-          type="text"
-          hidden
-          name="imageLinks"
-          value={imageLinks
-            .split(" ")
-            .map((link) => getUnsignedUrl(link))
-            .join(" ")}
-          onChange={(e) => {
-            console.log("Image Links:", imageLinks);
-            console.log(e.target.value);
-          }}
-        />
         <div className="my-6">
-          <ImageUploader
-            projectName={title}
-            onUpload={(url) => {
-              setImageLinks((prev) => {
-                if (prev !== "") {
-                  return prev + " " + url;
-                } else {
-                  return url;
-                }
-              });
-            }}
-          />
+          <ImageUploader />
         </div>
-
-        {/* Image Slider */}
-        {imageLinks !== "" && (
-          <ImageSlider
-            imageLinks={imageLinks.split(" ").filter((link) => link !== "")}
-            handleDelete={handleDeleteImage}
-          />
-        )}
 
         <button
           type="submit"
